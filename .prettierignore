@@ -1,0 +1,10 @@
+# Not formatted by Prettier:
+.next
+out
+build
+coverage
+node_modules
+pnpm-lock.yaml
+AGENTS.md
+CLAUDE.md
+public
