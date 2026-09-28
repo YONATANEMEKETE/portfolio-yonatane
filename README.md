@@ -2,7 +2,7 @@
 
 Personal portfolio — one Next.js app serving the public site, the articles, and a private `/manage` CMS.
 
-> Work in progress. Planning lives in [`docs/`](./docs) — start with [`docs/plan.md`](./docs/plan.md).
+> Work in progress.
 
 ## Stack
 
