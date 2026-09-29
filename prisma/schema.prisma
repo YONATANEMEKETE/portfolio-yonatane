@@ -7,12 +7,16 @@ datasource db {
   provider = "postgresql"
 }
 
-// One row per page load. The card's number is count(), so the history stays
-// available for charts later.
+// One row per (route, visitor, UTC day). Counting is enforced by the unique
+// constraint and an ON CONFLICT DO NOTHING insert, so repeat visits are free and
+// concurrent requests can't double-count. The number on the card is count().
 model PageView {
-  id        String   @id @default(cuid())
-  path      String
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  path        String
+  visitorHash String
+  day         DateTime @db.Date
+  createdAt   DateTime @default(now())
 
+  @@unique([path, visitorHash, day])
   @@index([createdAt])
 }

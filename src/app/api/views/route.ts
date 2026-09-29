@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { getViewCount, recordPageView } from '@/lib/views';
+import { getClientIp, getViewCount, recordPageView } from '@/lib/views';
 
 // `pg` needs TCP, and a GET handler that touches no dynamic API would otherwise
 // be prerendered, freezing the count at build time.
@@ -29,7 +29,11 @@ export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as { path?: unknown } | null;
 
   try {
-    await recordPageView(normalizePath(body?.path));
+    // Deduped server-side on (path, visitor, UTC day).
+    await recordPageView({
+      path: normalizePath(body?.path),
+      ip: getClientIp(request.headers),
+    });
 
     return NextResponse.json({ count: await getViewCount() });
   } catch (error) {
