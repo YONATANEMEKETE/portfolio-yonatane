@@ -2,6 +2,7 @@ import { Container } from '@/components/layout/container';
 import { BioSection } from '@/components/sections/bio-section';
 import { ContributionsSection } from '@/components/sections/contributions-section';
 import { ExperienceSection } from '@/components/sections/experience-section';
+import { TechStackSection } from '@/components/sections/tech-stack-section';
 import { ProfileCard } from '@/components/sections/profile-card';
 import { SocialLinks } from '@/components/sections/social-links';
 
@@ -15,6 +16,7 @@ export default function Home() {
         <BioSection />
         <ContributionsSection />
         <ExperienceSection />
+        <TechStackSection />
       </Container>
     </main>
   );
