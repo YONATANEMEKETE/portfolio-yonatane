@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import {
   motion,
@@ -9,6 +9,8 @@ import {
   useReducedMotion,
   type MotionValue,
 } from 'motion/react';
+
+import { registerMusicControls } from '@/lib/music-ducking';
 
 const track = {
   src: '/audio/lofi-loop.mp3',
@@ -108,6 +110,29 @@ export function MiniPlayer() {
     spinRef.current = (spinRef.current + delta * degreesPerMs) % 360;
     rotation.set(spinRef.current);
   });
+
+  // Lets the pronounce button stop the music and start it again.
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    if (!audio) {
+      return;
+    }
+
+    return registerMusicControls({
+      isPlaying: () => !audio.paused,
+      pause: () => {
+        audio.pause();
+        setPlaying(false);
+      },
+      resume: () => {
+        void audio
+          .play()
+          .then(() => setPlaying(true))
+          .catch(() => setPlaying(false));
+      },
+    });
+  }, []);
 
   const progress = duration > 0 ? Math.min((time / duration) * 100, 100) : 0;
 
