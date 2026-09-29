@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Caveat, Inter, JetBrains_Mono } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import { Header } from '@/components/layout/header';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const jetbrainsMono = JetBrains_Mono({
@@ -21,7 +22,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       lang="en"
       className={cn('font-sans', inter.variable, jetbrainsMono.variable, caveat.variable)}
     >
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }

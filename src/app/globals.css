@@ -127,6 +127,25 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/*
+ * Header nav glass plate (Pencil: "Tab Shape"). Top edge sits flush with the
+ * banner; concave 18px fillets curve inward, the body is inset 18px per side
+ * with 28px bottom corners. Used as a mask so the backdrop blur is clipped to
+ * the shape instead of its bounding box.
+ *
+ * The fill (65% white) and the 1px edge highlight (60% white, which composites
+ * to 86% over the fill) are both baked into this one mask, so the outline is
+ * rasterized from the same geometry as the plate edge and cannot drift off it.
+ */
+.nav-tab-mask {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 307 56' preserveAspectRatio='none'%3E%3Cpath d='M0 0c9.94 0 18 8.06 18 18l0 10c0 15.46 12.54 28 28 28l215 0c15.46 0 28-12.54 28-28l0-10c0-9.94 8.06-18 18-18z' fill='%23000' fill-opacity='0.65'/%3E%3Cpath d='M0 0c9.94 0 18 8.06 18 18l0 10c0 15.46 12.54 28 28 28l215 0c15.46 0 28-12.54 28-28l0-10c0-9.94 8.06-18 18-18z' fill='none' stroke='%23000' stroke-width='1' stroke-opacity='0.6'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 307 56' preserveAspectRatio='none'%3E%3Cpath d='M0 0c9.94 0 18 8.06 18 18l0 10c0 15.46 12.54 28 28 28l215 0c15.46 0 28-12.54 28-28l0-10c0-9.94 8.06-18 18-18z' fill='%23000' fill-opacity='0.65'/%3E%3Cpath d='M0 0c9.94 0 18 8.06 18 18l0 10c0 15.46 12.54 28 28 28l215 0c15.46 0 28-12.54 28-28l0-10c0-9.94 8.06-18 18-18z' fill='none' stroke='%23000' stroke-width='1' stroke-opacity='0.6'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
