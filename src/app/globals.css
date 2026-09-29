@@ -90,11 +90,11 @@
   --warning: #f59e0b;
   --code-bg: #0f172a;
   --code-ink: #e2e8f0;
-  --contrib-0: #ebedf0;
-  --contrib-1: #bfd7f5;
-  --contrib-2: #84b6f0;
-  --contrib-3: #3e8beb;
-  --contrib-4: #0b54c4;
+  --contrib-0: #d9d9de;
+  --contrib-1: #c2c2c9;
+  --contrib-2: #a6a6ae;
+  --contrib-3: #8a8a93;
+  --contrib-4: #6b7280;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
