@@ -25,6 +25,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@calcom/embed-react": "^1.5.3",
     "@hookform/resolvers": "^5.9.1",
     "@node-rs/argon2": "^2.2.1",
     "@prisma/adapter-pg": "7.10.0",
