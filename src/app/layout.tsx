@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Geist } from 'next/font/google';
+import { Caveat, Inter, JetBrains_Mono } from 'next/font/google';
 import { cn } from '@/lib/utils';
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+});
+const caveat = Caveat({ subsets: ['latin'], variable: '--font-hand' });
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -12,7 +17,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={cn('font-sans', geist.variable)}>
+    <html
+      lang="en"
+      className={cn('font-sans', inter.variable, jetbrainsMono.variable, caveat.variable)}
+    >
       <body>{children}</body>
     </html>
   );
