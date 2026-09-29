@@ -19,6 +19,8 @@ const eslintConfig = defineConfig([
     'coverage/**',
     '.husky/**',
     'public/**',
+    // Prisma-generated client:
+    'src/generated/**',
   ]),
 ]);
 
