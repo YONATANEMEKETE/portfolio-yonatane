@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 
+import { HandNote } from '@/components/layout/hand-note';
 import { BookCall } from '@/components/sections/book-call';
 import { SocialCard } from '@/components/sections/social-card';
 
@@ -79,33 +80,6 @@ const socials: { label: string; href: string; icon: Glyph; embed?: 'cal' }[] = [
   },
 ];
 
-// Hand-written note from the design, sitting in the right gutter with its arrow
-// curving down onto the end of the social row. Decorative.
-const contactArrow =
-  'M135 6c-20 4-35 12-39 24-3 10-14 14-20 9-6-5-2-13 6-12 12 2 14 17 2 28-10 9-44 13-74 9m0 0l10-4m-10 4l7-9';
-
-function ContactNote() {
-  return (
-    <div
-      aria-hidden
-      className="text-muted-ink pointer-events-none absolute -top-[89px] left-full ml-[15px] hidden w-[150px] flex-col items-end xl:flex"
-    >
-      <span className="font-hand text-[20px] leading-[25px]">Contact me</span>
-      <svg
-        viewBox="0 0 150 80"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-20 w-[150px]"
-      >
-        <path d={contactArrow} />
-      </svg>
-    </div>
-  );
-}
-
 export function SocialLinks({ className }: { className?: string }) {
   return (
     <section
@@ -119,7 +93,7 @@ export function SocialLinks({ className }: { className?: string }) {
           <SocialCard key={label} label={label} href={href} icon={<SocialIcon {...icon} />} />
         ),
       )}
-      <ContactNote />
+      <HandNote label="Contact me" className="top-[-89px] left-full ml-[15px]" />
     </section>
   );
 }

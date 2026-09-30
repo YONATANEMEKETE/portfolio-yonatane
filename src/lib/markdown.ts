@@ -27,7 +27,7 @@ export async function renderMarkdown(source: string) {
     .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeSanitize)
-    .use(rehypePrettyCode, { theme: 'github-dark', keepBackground: false })
+    .use(rehypePrettyCode, { theme: 'github-light', keepBackground: false })
     .use(rehypeStringify)
     .process(source);
 

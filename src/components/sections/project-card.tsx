@@ -5,32 +5,13 @@ import type { Project } from '@/content/projects';
 import { cn } from '@/lib/utils';
 
 import { ToolCard } from '@/components/sections/tool-card';
-import { Highlighter } from '@/components/ui/highlighter';
+import { Emphasise } from '@/components/emphasise';
 
 type ProjectCardProps = {
   project: Project;
 };
 
 const statusLabel = { building: 'Building', live: 'Live' } as const;
-
-/**
- * Phrases marked with `**bold**` render as a marker swipe rather than bold
- * weight — the same treatment as the experience bullets.
- */
-function emphasise(line: string) {
-  return line
-    .split(/(\*\*[^*]+\*\*)/g)
-    .filter(Boolean)
-    .map((part, index) =>
-      part.startsWith('**') ? (
-        <Highlighter key={index} action="underline" color="#8a8a93" padding={-4}>
-          {part.slice(2, -2)}
-        </Highlighter>
-      ) : (
-        <span key={index}>{part}</span>
-      ),
-    );
-}
 
 /** GitHub mark copied from the social row — lucide no longer ships brand icons. */
 function GithubIcon({ className }: { className?: string }) {
@@ -87,8 +68,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
             </span>
           </div>
 
-          <p className="text-muted-ink text-[14px] leading-[17px]">{emphasise(tagline)}</p>
-          <p className="text-body-soft text-[14px] leading-[1.5]">{emphasise(description)}</p>
+          <p className="text-muted-ink text-[14px] leading-[17px]">
+            <Emphasise text={tagline} />
+          </p>
+          <p className="text-body-soft text-[14px] leading-[1.5]">
+            <Emphasise text={description} />
+          </p>
 
           <ul className="flex flex-wrap gap-1.5">
             {chips.map((tool) => (

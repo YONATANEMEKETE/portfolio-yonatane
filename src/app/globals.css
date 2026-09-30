@@ -89,8 +89,8 @@
   --brand: #2f80ed;
   --success: #22c55e;
   --warning: #f59e0b;
-  --code-bg: #0f172a;
-  --code-ink: #e2e8f0;
+  --code-bg: #f6f6f8;
+  --code-ink: #1f2937;
   --contrib-0: #d9d9de;
   --contrib-1: #c2c2c9;
   --contrib-2: #a6a6ae;
@@ -175,6 +175,49 @@
 /* The design marks list items with a small brand-blue square. */
 .prose ul {
   list-style-type: square;
+}
+
+/* The design draws quotes with a solid ink bar rather than a hairline. */
+.prose {
+  --tw-prose-quote-borders: var(--ink);
+}
+
+/* Inline code reads as a tile, not as a quoted string: drop the typography
+   plugin's backticks and give it the same chip treatment used across the site. */
+.prose :not(pre) > code {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background-image: linear-gradient(to bottom, var(--tile-start), var(--tile-end));
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: none;
+}
+
+/* Code blocks and screenshots get the card ring so they read as panels. */
+.prose pre {
+  border-radius: 12px;
+  border: 1px solid var(--line-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.prose img {
+  border-radius: 12px;
+  border: 1px solid var(--line-soft);
+}
+
+/*
+ * Bold in a markdown body draws the same rough-notation underline the card and
+ * experience emphasis draws (see ProseAnnotations) instead of heavier weight,
+ * so `**…**` marks a phrase rather than shouting.
+ */
+.prose strong {
+  font-weight: inherit;
 }
 
 /*

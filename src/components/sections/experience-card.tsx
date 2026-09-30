@@ -5,7 +5,7 @@ import type { Experience } from '@/content/experience';
 import { cn } from '@/lib/utils';
 
 import { ToolCard } from '@/components/sections/tool-card';
-import { Highlighter } from '@/components/ui/highlighter';
+import { Emphasise } from '@/components/emphasise';
 
 type ExperienceCardProps = {
   experience: Experience;
@@ -13,28 +13,6 @@ type ExperienceCardProps = {
   open: boolean;
   onToggle: () => void;
 };
-
-/**
- * Bullets mark the phrase worth noticing with `**bold**`. The design draws that
- * emphasis as a marker swipe rather than bold weight.
- */
-function emphasise(line: string) {
-  return line
-    .split(/(\*\*[^*]+\*\*)/g)
-    .filter(Boolean)
-    .map((part, index) =>
-      part.startsWith('**') ? (
-        // rough-notation draws the line `padding` px below the element's line
-        // box, so a negative value lifts it off the 1.5 line-height gap and
-        // tucks it under the text.
-        <Highlighter key={index} action="underline" color="#8a8a93" padding={-4}>
-          {part.slice(2, -2)}
-        </Highlighter>
-      ) : (
-        <span key={index}>{part}</span>
-      ),
-    );
-}
 
 export function ExperienceCard({ experience, open, onToggle }: ExperienceCardProps) {
   const { id, company, role, logo, location, start, end, tools, done } = experience;
@@ -122,7 +100,9 @@ export function ExperienceCard({ experience, open, onToggle }: ExperienceCardPro
                     aria-hidden
                     className="bg-contrib-2 mt-2 size-[6px] shrink-0 rounded-[1px]"
                   />
-                  <span>{emphasise(line)}</span>
+                  <span>
+                    <Emphasise text={line} />
+                  </span>
                 </li>
               ))}
             </ul>
