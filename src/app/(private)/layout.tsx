@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
+import { findValidSession } from '@/lib/auth';
+import { SESSION_COOKIE } from '@/lib/session';
 import { Container } from '@/components/layout/container';
+import { ManageHeader } from '@/components/manage/manage-header';
 import { ManageTabs } from '@/components/manage/manage-tabs';
 
 // Private area (/manage): noindex — it must never appear in search results.
@@ -10,22 +15,18 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ManageLayout({ children }: LayoutProps<'/'>) {
+// Real gate for every /manage route. proxy.ts already bounces cookie-less
+// requests to the login page early (optimistic check); here the token is
+// actually verified — sha256 → Session row → not expired — so a forged cookie
+// still ends at /manage/login.
+export default async function ManageLayout({ children }: LayoutProps<'/'>) {
+  const cookieStore = await cookies();
+  const session = await findValidSession(cookieStore.get(SESSION_COOKIE)?.value);
+  if (!session) redirect('/manage/login');
+
   return (
     <div className="pb-16">
-      <header className="border-line-soft bg-background/80 sticky top-0 z-50 border-b backdrop-blur-md">
-        <Container>
-          <div className="flex items-center justify-between gap-4 py-4">
-            {/* Same mono + status dot line as the bio section — keeps the private
-                area in the home page's voice without the full cloudscape banner. */}
-            <p className="text-muted-ink flex items-center gap-2 font-mono text-[14px]">
-              <span aria-hidden className="bg-success size-2 rounded-full" />
-              Manage
-            </p>
-            <ManageTabs />
-          </div>
-        </Container>
-      </header>
+      <ManageHeader actions={<ManageTabs />} />
       <Container className="pt-10">{children}</Container>
     </div>
   );

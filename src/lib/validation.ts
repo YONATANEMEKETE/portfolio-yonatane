@@ -33,3 +33,14 @@ export const updatePasscodeSchema = z
   });
 
 export type UpdatePasscodeForm = z.infer<typeof updatePasscodeSchema>;
+
+/**
+ * Login only demands a non-empty string: the 4–8 rule is enforced when the
+ * passcode is *set*, and an odd-length value should fail as "wrong passcode"
+ * rather than as a validation message.
+ */
+export const loginSchema = z.object({
+  passcode: z.string().min(1, 'Enter the passcode.').max(128, 'Passcode too long.'),
+});
+
+export type LoginForm = z.infer<typeof loginSchema>;
