@@ -5,6 +5,7 @@ import type { Project } from '@/content/projects';
 import { cn } from '@/lib/utils';
 
 import { ToolCard } from '@/components/sections/tool-card';
+import { Highlighter } from '@/components/ui/highlighter';
 
 type ProjectCardProps = {
   project: Project;
@@ -13,8 +14,8 @@ type ProjectCardProps = {
 const statusLabel = { building: 'Building', live: 'Live' } as const;
 
 /**
- * Phrases marked with `**bold**` render as a grey wave underline rather than
- * bold weight — the same treatment as the experience bullets.
+ * Phrases marked with `**bold**` render as a marker swipe rather than bold
+ * weight — the same treatment as the experience bullets.
  */
 function emphasise(line: string) {
   return line
@@ -22,9 +23,9 @@ function emphasise(line: string) {
     .filter(Boolean)
     .map((part, index) =>
       part.startsWith('**') ? (
-        <span key={index} className="underline-wave-muted">
+        <Highlighter key={index} action="underline" color="#8a8a93" padding={-4}>
           {part.slice(2, -2)}
-        </span>
+        </Highlighter>
       ) : (
         <span key={index}>{part}</span>
       ),

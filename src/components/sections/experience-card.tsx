@@ -5,6 +5,7 @@ import type { Experience } from '@/content/experience';
 import { cn } from '@/lib/utils';
 
 import { ToolCard } from '@/components/sections/tool-card';
+import { Highlighter } from '@/components/ui/highlighter';
 
 type ExperienceCardProps = {
   experience: Experience;
@@ -15,7 +16,7 @@ type ExperienceCardProps = {
 
 /**
  * Bullets mark the phrase worth noticing with `**bold**`. The design draws that
- * emphasis as a grey wave underline rather than bold weight.
+ * emphasis as a marker swipe rather than bold weight.
  */
 function emphasise(line: string) {
   return line
@@ -23,9 +24,12 @@ function emphasise(line: string) {
     .filter(Boolean)
     .map((part, index) =>
       part.startsWith('**') ? (
-        <span key={index} className="underline-wave-muted">
+        // rough-notation draws the line `padding` px below the element's line
+        // box, so a negative value lifts it off the 1.5 line-height gap and
+        // tucks it under the text.
+        <Highlighter key={index} action="underline" color="#8a8a93" padding={-4}>
           {part.slice(2, -2)}
-        </span>
+        </Highlighter>
       ) : (
         <span key={index}>{part}</span>
       ),
@@ -93,7 +97,11 @@ export function ExperienceCard({ experience, open, onToggle }: ExperienceCardPro
           open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
         )}
       >
-        <div className="overflow-hidden">
+        {/* `relative` matters: rough-notation inserts its <svg> as an absolutely
+            positioned sibling of the marked text, and only a containing block
+            inside this overflow-hidden box is clipped while the card is
+            collapsed — otherwise the lines paint over the closed card. */}
+        <div className="relative overflow-hidden">
           <div className="border-line-soft border-t px-5 pt-4 pb-5">
             <p className="text-ink text-[14px] leading-[17px] font-bold">
               Technologies &amp; Tools
