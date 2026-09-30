@@ -40,3 +40,12 @@ model AuthConfig {
   passcodeHash String
   updatedAt    DateTime @updatedAt
 }
+
+// One row per browser session. The raw 32-byte token lives only in the
+// HttpOnly pf_session cookie; the DB keeps its SHA-256 plus expiry (30 days).
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
