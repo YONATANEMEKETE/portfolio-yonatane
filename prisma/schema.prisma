@@ -20,3 +20,14 @@ model PageView {
   @@unique([path, visitorHash, day])
   @@index([createdAt])
 }
+
+// Yonatane's own addresses for passcode-reset links (auth.md). Plaintext, not
+// hashed: the server must be able to send mail to them — masking happens on the
+// way out. null verifiedAt = added but not yet confirmed via its verification
+// link; only verified rows are ever selectable on /manage/reset (M5).
+model RecipientEmail {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+}
