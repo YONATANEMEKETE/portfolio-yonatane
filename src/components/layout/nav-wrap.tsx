@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
 
+import { pillSpring, usePills } from '@/lib/use-pills';
 import { cn } from '@/lib/utils';
 
 // The glass shape + edge highlight live in the .nav-tab-mask utility (globals.css).
@@ -34,21 +35,10 @@ function isActivePath(pathname: string, href: string, projectsInView: boolean) {
   return pathname.startsWith(href);
 }
 
-const pillSpring = { type: 'spring', stiffness: 400, damping: 34, mass: 0.7 } as const;
-
-/** Where a nav pill sits, in the list's own coordinates. */
-type PillBox = { x: number; y: number; width: number; height: number };
-
 export function NavWrap() {
   const pathname = usePathname();
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [projectsInView, setProjectsInView] = useState(false);
-  const itemRefs = useRef(new Map<string, HTMLLIElement>());
-  const listRef = useRef<HTMLUListElement>(null);
-  const [pills, setPills] = useState<{ active: PillBox | null; hover: PillBox | null }>({
-    active: null,
-    hover: null,
-  });
 
   useEffect(() => {
     if (pathname !== '/') {
@@ -77,51 +67,11 @@ export function NavWrap() {
   const activeHref =
     navLinks.find(({ href }) => isActivePath(pathname, href, projectsActive))?.href ?? null;
 
-  // Pills are positioned from the list's own geometry. A shared-layout pill
-  // measures in document coordinates, so the scroll reset a navigation performs
-  // became a vertical delta and the pill flew in from below the page; measuring
-  // `offsetLeft`/`offsetTop` against the list makes scroll irrelevant.
-  useLayoutEffect(() => {
-    const measure = (href: string | null): PillBox | null => {
-      const item = href ? itemRefs.current.get(href) : null;
-      const list = listRef.current;
-      if (!item || !list) {
-        return null;
-      }
-
-      // Rects rather than offsetTop/offsetLeft: those round to whole pixels,
-      // which leaves the pill visibly a pixel off when the row is centred.
-      const itemRect = item.getBoundingClientRect();
-      const listRect = list.getBoundingClientRect();
-
-      return {
-        x: itemRect.left - listRect.left,
-        y: itemRect.top - listRect.top,
-        width: itemRect.width,
-        height: itemRect.height,
-      };
-    };
-
-    const update = () => {
-      setPills({
-        active: measure(activeHref),
-        hover: hoveredHref && hoveredHref !== activeHref ? measure(hoveredHref) : null,
-      });
-    };
-
-    update();
-
-    // Item boxes change with the viewport, and once more when the webfont lands.
-    const observer = new ResizeObserver(update);
-    if (listRef.current) {
-      observer.observe(listRef.current);
-    }
-    for (const item of itemRefs.current.values()) {
-      observer.observe(item);
-    }
-
-    return () => observer.disconnect();
-  }, [activeHref, hoveredHref]);
+  // Shared pill geometry: measured against the list, animated with pillSpring.
+  const { listRef, itemRefs, pills } = usePills<HTMLUListElement, HTMLLIElement>({
+    activeHref,
+    hoverHref: hoveredHref,
+  });
 
   // Section links need their own scroll: once the hash is in the URL the browser
   // treats another click as a no-op, so clicking again after scrolling away
