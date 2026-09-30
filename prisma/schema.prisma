@@ -31,3 +31,12 @@ model RecipientEmail {
   verifiedAt DateTime?
   createdAt  DateTime  @default(now())
 }
+
+// Exactly one row (id = 1): the single owner's passcode, as an argon2id PHC
+// string. In the DB rather than an env var so recovery can rotate it without a
+// redeploy (auth.md). Never plaintext.
+model AuthConfig {
+  id           Int      @id @default(1)
+  passcodeHash String
+  updatedAt    DateTime @updatedAt
+}
