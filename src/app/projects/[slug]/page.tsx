@@ -62,7 +62,7 @@ export default async function ProjectDetailsPage(props: PageProps<'/projects/[sl
                 /
               </li>
               <li>
-                <Link href="/projects" className="hover:text-ink font-medium transition-colors">
+                <Link href="/#projects" className="hover:text-ink font-medium transition-colors">
                   Projects
                 </Link>
               </li>

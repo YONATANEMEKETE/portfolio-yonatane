@@ -309,6 +309,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .contrib-wave-square,
   .react-activity-calendar__calendar rect[style*='react-activity-calendar--loading-animation'] {
     animation: none !important;
@@ -612,5 +616,8 @@
   }
   html {
     @apply font-sans;
+    /* The nav's section links scroll within a page; animate that, but let the
+       reduced-motion media query above turn it back into a jump. */
+    scroll-behavior: smooth;
   }
 }
