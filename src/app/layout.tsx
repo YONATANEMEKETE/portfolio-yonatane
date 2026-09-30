@@ -3,6 +3,7 @@ import './globals.css';
 import { Caveat, Inter, JetBrains_Mono } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/header';
+import { EdgeFades } from '@/components/layout/edge-fades';
 import { ViewRecorder } from '@/components/layout/view-recorder';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <body>
         <Header />
         {children}
+        <EdgeFades />
         <ViewRecorder />
       </body>
     </html>
