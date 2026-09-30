@@ -16,7 +16,7 @@ export function ExperienceSection() {
   const [openId, setOpenId] = useState<string | null>(newestFirst[0]?.id ?? null);
 
   return (
-    <section className="pt-7">
+    <section className="pt-8">
       <h2 className="text-ink text-[28px] leading-[34px] font-bold">Experience</h2>
 
       <div className="mt-4 flex flex-col gap-4">

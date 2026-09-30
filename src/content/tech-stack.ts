@@ -24,6 +24,7 @@ export const techStack: ExperienceTool[] = [
   { name: 'Zod', icon: '/logos/tools/zod.svg' },
   { name: 'Figma', icon: '/logos/tools/figma.svg' },
   { name: 'Node.js', icon: '/logos/tools/node-js.svg' },
+  { name: 'Express', icon: '/logos/tools/express.svg' },
   { name: 'NestJS', icon: '/logos/tools/nestjs.svg' },
   { name: 'Hono', icon: '/logos/tools/hono.svg' },
   { name: 'Bun', icon: '/logos/tools/bun.svg' },
