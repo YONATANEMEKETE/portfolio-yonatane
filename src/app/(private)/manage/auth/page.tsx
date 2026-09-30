@@ -1,6 +1,7 @@
-// Auth role of /manage: recovery emails + passcode (passcode lands with M4).
+// Auth role of /manage: recovery emails + passcode.
 import { getPrisma } from '@/lib/prisma';
 import { RecoveryEmails } from '@/components/manage/recovery-emails';
+import { PasscodeManager } from '@/components/manage/passcode-manager';
 
 // The list reads live rows — without this, `next build` would prerender the
 // page and freeze whatever the DB held at build time.
@@ -13,8 +14,17 @@ async function loadRecoveryEmails() {
   });
 }
 
+async function loadPasscodeUpdatedAt() {
+  const config = await getPrisma().authConfig.findUnique({ where: { id: 1 } });
+
+  return config?.updatedAt.toISOString() ?? null;
+}
+
 export default async function ManageAuthPage() {
-  const emails = await loadRecoveryEmails();
+  const [emails, passcodeUpdatedAt] = await Promise.all([
+    loadRecoveryEmails(),
+    loadPasscodeUpdatedAt(),
+  ]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -36,9 +46,7 @@ export default async function ManageAuthPage() {
         <p className="text-muted-ink mt-1 font-mono text-[13px]">
           Change the passcode that unlocks /manage.
         </p>
-        <div className="border-line-soft text-muted-ink mt-4 flex items-center justify-center rounded-[12px] border border-dashed py-8 font-mono text-[13px]">
-          Update form lands in M4.
-        </div>
+        <PasscodeManager passcodeUpdatedAt={passcodeUpdatedAt} />
       </section>
     </div>
   );

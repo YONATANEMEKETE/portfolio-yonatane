@@ -1,8 +1,9 @@
 'use server';
 
 import { Prisma } from '@/generated/prisma/client';
+import { hashPasscode } from '@/lib/auth';
 import { getPrisma } from '@/lib/prisma';
-import { addEmailSchema, MAX_EMAILS } from '@/lib/validation';
+import { addEmailSchema, MAX_EMAILS, updatePasscodeSchema } from '@/lib/validation';
 
 // TODO(M4): gate every action here on the session cookie. Until login exists,
 // these endpoints are callable by anyone who can reach the deployment.
@@ -12,6 +13,8 @@ export type RecoveryEmailRow = { id: string; email: string };
 export type AddEmailResult = { ok: true; email: RecoveryEmailRow } | { ok: false; error: string };
 
 export type RemoveEmailResult = { ok: true } | { ok: false; error: string };
+
+export type UpdatePasscodeResult = { ok: true; updatedAt: string } | { ok: false; error: string };
 
 function isUniqueViolation(error: unknown) {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002';
@@ -63,5 +66,31 @@ export async function removeRecipientEmail(id: string): Promise<RemoveEmailResul
 
     console.error('removeRecipientEmail failed', error);
     return { ok: false, error: 'Could not remove the address. Try again.' };
+  }
+}
+
+export async function updatePasscode(input: unknown): Promise<UpdatePasscodeResult> {
+  // Re-validate server-side — same rule as the email actions.
+  const parsed = updatePasscodeSchema.safeParse(input);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    return { ok: false, error: issue?.message ?? 'Invalid passcode.' };
+  }
+
+  try {
+    const passcodeHash = await hashPasscode(parsed.data.passcode);
+
+    // Single row: upsert means first run (seed) and every later rotation share
+    // one code path.
+    const config = await getPrisma().authConfig.upsert({
+      where: { id: 1 },
+      create: { id: 1, passcodeHash },
+      update: { passcodeHash },
+    });
+
+    return { ok: true, updatedAt: config.updatedAt.toISOString() };
+  } catch (error) {
+    console.error('updatePasscode failed', error);
+    return { ok: false, error: 'Could not save the passcode. Try again.' };
   }
 }

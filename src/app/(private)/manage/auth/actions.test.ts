@@ -1,13 +1,17 @@
 import { Prisma } from '@/generated/prisma/client';
+import { verify } from '@node-rs/argon2';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { addRecipientEmail, removeRecipientEmail } from './actions';
+import { addRecipientEmail, removeRecipientEmail, updatePasscode } from './actions';
 
 const prismaMock = vi.hoisted(() => ({
   recipientEmail: {
     count: vi.fn(),
     create: vi.fn(),
     delete: vi.fn(),
+  },
+  authConfig: {
+    upsert: vi.fn(),
   },
 }));
 
@@ -106,6 +110,61 @@ describe('removeRecipientEmail', () => {
     await expect(removeRecipientEmail('x')).resolves.toEqual({
       ok: false,
       error: 'Could not remove the address. Try again.',
+    });
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+});
+
+describe('updatePasscode', () => {
+  it('rejects a passcode shorter than 4 characters without touching the database', async () => {
+    const result = await updatePasscode({ passcode: 'ab', confirm: 'ab' });
+
+    expect(result).toEqual({ ok: false, error: 'At least 4 characters' });
+    expect(prismaMock.authConfig.upsert).not.toHaveBeenCalled();
+  });
+
+  it('rejects a passcode longer than 8 characters', async () => {
+    const result = await updatePasscode({ passcode: 'abcdefghi', confirm: 'abcdefghi' });
+
+    expect(result).toEqual({ ok: false, error: 'At most 8 characters' });
+    expect(prismaMock.authConfig.upsert).not.toHaveBeenCalled();
+  });
+
+  it('rejects mismatched confirmation', async () => {
+    const result = await updatePasscode({ passcode: 'abcd', confirm: 'abce' });
+
+    expect(result).toEqual({ ok: false, error: 'Passcodes do not match.' });
+    expect(prismaMock.authConfig.upsert).not.toHaveBeenCalled();
+  });
+
+  it('stores an argon2id hash — never the plaintext — and upserts row id 1', async () => {
+    const updatedAt = new Date('2026-09-30T12:00:00.000Z');
+    prismaMock.authConfig.upsert.mockResolvedValue({ id: 1, passcodeHash: 'x', updatedAt });
+
+    const result = await updatePasscode({ passcode: 's3cret', confirm: 's3cret' });
+
+    expect(result).toEqual({ ok: true, updatedAt: updatedAt.toISOString() });
+
+    const call = prismaMock.authConfig.upsert.mock.calls[0]![0];
+    expect(call.where).toEqual({ id: 1 });
+
+    const storedHash: string = call.create.passcodeHash;
+    expect(storedHash).toMatch(/^\$argon2id\$v=19\$m=19456,t=2,p=1\$/);
+    expect(storedHash).not.toContain('s3cret');
+    await expect(verify(storedHash, 's3cret')).resolves.toBe(true);
+    await expect(verify(storedHash, 'wrong')).resolves.toBe(false);
+  });
+
+  it('returns a generic error when the database fails', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    prismaMock.authConfig.upsert.mockRejectedValue(new Error('connection reset'));
+
+    const result = await updatePasscode({ passcode: 'abcd', confirm: 'abcd' });
+
+    expect(result).toEqual({
+      ok: false,
+      error: 'Could not save the passcode. Try again.',
     });
     expect(consoleError).toHaveBeenCalled();
     consoleError.mockRestore();

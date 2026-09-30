@@ -16,3 +16,20 @@ export const addEmailSchema = z.object({
 });
 
 export type AddEmailForm = z.infer<typeof addEmailSchema>;
+
+/**
+ * The passcode is 4–8 characters (Yonatane's call — shorter than the original
+ * min-8 spec in auth.md; argon2id + the M4 login lockout carry the load).
+ * `confirm` exists so a typo in a masked field can't lock the owner out.
+ */
+export const updatePasscodeSchema = z
+  .object({
+    passcode: z.string().min(4, 'At least 4 characters').max(8, 'At most 8 characters'),
+    confirm: z.string().min(1, 'Confirm the passcode'),
+  })
+  .refine((values) => values.passcode === values.confirm, {
+    message: 'Passcodes do not match.',
+    path: ['confirm'],
+  });
+
+export type UpdatePasscodeForm = z.infer<typeof updatePasscodeSchema>;
