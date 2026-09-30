@@ -24,7 +24,7 @@ function monogram(name: string) {
  */
 export function ToolCard({ name, icon }: ExperienceTool) {
   return (
-    <li className="border-line from-tile-start to-tile-end text-body flex h-8 items-center gap-2 rounded-[5px] border bg-linear-to-b pr-2.5 pl-[7px] text-[12px] leading-none font-medium whitespace-nowrap">
+    <li className="border-line from-tile-start to-tile-end text-body hover:border-ghost flex h-8 items-center gap-2 rounded-[5px] border bg-linear-to-b pr-2.5 pl-[7px] text-[12px] leading-none font-medium whitespace-nowrap transition-colors hover:from-[#fcfcfe] hover:to-[#e7e7ed]">
       {icon ? (
         <Image src={icon} alt="" width={18} height={18} className="size-[18px] shrink-0" />
       ) : (
