@@ -6,6 +6,7 @@ import { GitHubCalendar } from 'react-github-calendar';
 import 'react-github-calendar/tooltips.css';
 
 import { activityTooltip, legendTooltip, maxContributionLevel } from '@/lib/contributions';
+import { ContributionsSkeleton } from './contributions-skeleton';
 
 // Detects hydration without an effect: the server snapshot is false, the client's
 // is true, so the calendar only renders once hydrated.
@@ -64,7 +65,9 @@ export function ContributionsSection() {
             }}
             errorMessage="Contribution graph is unavailable right now."
           />
-        ) : null}
+        ) : (
+          <ContributionsSkeleton />
+        )}
       </div>
     </section>
   );

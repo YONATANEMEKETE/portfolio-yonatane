@@ -203,6 +203,376 @@
   background-size: 12px 4px;
 }
 
+/*
+ * Contributions graph — wave loading skeleton.
+ * Narrow dark band sweeping left → right: 3 dark → 2 mid → 2 light trailing.
+ * Background (skeleton) and fill (library) both animate through the same grey ramp
+ * so the texture matches the real graph. Duration 1.65s, per-column delay 28ms
+ * gives a ~7-column (≈102px) band at any moment.
+ */
+@keyframes contrib-wave {
+  0%,
+  68% {
+    background-color: var(--contrib-0);
+  }
+  72% {
+    background-color: var(--contrib-4);
+  }
+  75.5% {
+    background-color: var(--contrib-4);
+  }
+  76% {
+    background-color: var(--contrib-3);
+  }
+  79% {
+    background-color: var(--contrib-3);
+  }
+  79.5% {
+    background-color: var(--contrib-2);
+  }
+  82.5% {
+    background-color: var(--contrib-2);
+  }
+  86%,
+  100% {
+    background-color: var(--contrib-0);
+  }
+}
+
+.contrib-wave-square {
+  background-color: var(--contrib-0);
+  animation: contrib-wave 1.65s linear infinite;
+}
+
+@keyframes contrib-wave-fill {
+  0%,
+  68% {
+    fill: var(--contrib-0);
+  }
+  72% {
+    fill: var(--contrib-4);
+  }
+  75.5% {
+    fill: var(--contrib-4);
+  }
+  76% {
+    fill: var(--contrib-3);
+  }
+  79% {
+    fill: var(--contrib-3);
+  }
+  79.5% {
+    fill: var(--contrib-2);
+  }
+  82.5% {
+    fill: var(--contrib-2);
+  }
+  86%,
+  100% {
+    fill: var(--contrib-0);
+  }
+}
+
+/* Library rects use fill; override its diagonal pulse with the narrow band — only while loading. */
+.react-activity-calendar__calendar rect[style*='react-activity-calendar--loading-animation'] {
+  animation: contrib-wave-fill 1.65s linear infinite !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contrib-wave-square,
+  .react-activity-calendar__calendar rect[style*='react-activity-calendar--loading-animation'] {
+    animation: none !important;
+  }
+
+  .contrib-wave-square {
+    background-color: var(--contrib-0);
+    opacity: 0.65;
+  }
+}
+
+/*
+ * Override react-activity-calendar's diagonal loading wave
+ * (weekIndex*20 + dayIndex*20) to a strict left → right column wave.
+ * The library injects `animation-delay: ${week*20+day*20}ms` inline;
+ * these !important rules collapse the day component so each column
+ * shares one delay, producing a horizontal sweep.
+ */
+.react-activity-calendar__calendar
+  g:nth-child(1)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 0ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(2)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 28ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(3)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 56ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(4)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 84ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(5)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 112ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(6)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 140ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(7)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 168ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(8)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 196ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(9)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 224ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(10)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 252ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(11)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 280ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(12)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 308ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(13)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 336ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(14)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 364ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(15)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 392ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(16)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 420ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(17)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 448ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(18)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 476ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(19)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 504ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(20)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 532ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(21)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 560ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(22)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 588ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(23)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 616ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(24)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 644ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(25)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 672ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(26)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 700ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(27)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 728ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(28)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 756ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(29)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 784ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(30)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 812ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(31)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 840ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(32)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 868ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(33)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 896ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(34)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 924ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(35)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 952ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(36)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 980ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(37)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1008ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(38)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1036ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(39)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1064ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(40)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1092ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(41)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1120ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(42)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1148ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(43)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1176ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(44)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1204ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(45)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1232ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(46)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1260ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(47)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1288ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(48)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1316ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(49)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1344ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(50)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1372ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(51)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1400ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(52)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1428ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(53)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1456ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(54)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1484ms !important;
+}
+.react-activity-calendar__calendar
+  g:nth-child(55)
+  rect[style*='react-activity-calendar--loading-animation'] {
+  animation-delay: 1512ms !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
