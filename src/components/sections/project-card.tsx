@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 
 import type { Project } from '@/content/projects';
@@ -116,7 +117,10 @@ export function ProjectCard({ project }: ProjectCardProps) {
                 )}
               </div>
 
-              <a
+              {/* A plain anchor here would reload the document, restarting the
+                  header and stopping the music; Link keeps the navigation
+                  client-side like every other internal link. */}
+              <Link
                 href={`/projects/${slug}`}
                 aria-label={`${name} details`}
                 className="text-ink focus-visible:ring-ink/30 group flex shrink-0 items-center gap-1 text-[14px] leading-4 font-medium after:absolute after:inset-0 after:content-[''] focus-visible:ring-2 focus-visible:outline-none"
@@ -126,7 +130,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                   aria-hidden
                   className="size-[14px] transition-transform duration-200 ease-out group-hover:translate-x-1"
                 />
-              </a>
+              </Link>
             </div>
           </div>
         </div>

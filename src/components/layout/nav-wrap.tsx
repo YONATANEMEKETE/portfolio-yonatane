@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type MouseEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
@@ -36,10 +36,19 @@ function isActivePath(pathname: string, href: string, projectsInView: boolean) {
 
 const pillSpring = { type: 'spring', stiffness: 400, damping: 34, mass: 0.7 } as const;
 
+/** Where a nav pill sits, in the list's own coordinates. */
+type PillBox = { x: number; y: number; width: number; height: number };
+
 export function NavWrap() {
   const pathname = usePathname();
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [projectsInView, setProjectsInView] = useState(false);
+  const itemRefs = useRef(new Map<string, HTMLLIElement>());
+  const listRef = useRef<HTMLUListElement>(null);
+  const [pills, setPills] = useState<{ active: PillBox | null; hover: PillBox | null }>({
+    active: null,
+    hover: null,
+  });
 
   useEffect(() => {
     if (pathname !== '/') {
@@ -65,6 +74,54 @@ export function NavWrap() {
   // Gated on the pathname so a stale observation from the home page cannot mark
   // the link active on another route.
   const projectsActive = pathname === '/' && projectsInView;
+  const activeHref =
+    navLinks.find(({ href }) => isActivePath(pathname, href, projectsActive))?.href ?? null;
+
+  // Pills are positioned from the list's own geometry. A shared-layout pill
+  // measures in document coordinates, so the scroll reset a navigation performs
+  // became a vertical delta and the pill flew in from below the page; measuring
+  // `offsetLeft`/`offsetTop` against the list makes scroll irrelevant.
+  useLayoutEffect(() => {
+    const measure = (href: string | null): PillBox | null => {
+      const item = href ? itemRefs.current.get(href) : null;
+      const list = listRef.current;
+      if (!item || !list) {
+        return null;
+      }
+
+      // Rects rather than offsetTop/offsetLeft: those round to whole pixels,
+      // which leaves the pill visibly a pixel off when the row is centred.
+      const itemRect = item.getBoundingClientRect();
+      const listRect = list.getBoundingClientRect();
+
+      return {
+        x: itemRect.left - listRect.left,
+        y: itemRect.top - listRect.top,
+        width: itemRect.width,
+        height: itemRect.height,
+      };
+    };
+
+    const update = () => {
+      setPills({
+        active: measure(activeHref),
+        hover: hoveredHref && hoveredHref !== activeHref ? measure(hoveredHref) : null,
+      });
+    };
+
+    update();
+
+    // Item boxes change with the viewport, and once more when the webfont lands.
+    const observer = new ResizeObserver(update);
+    if (listRef.current) {
+      observer.observe(listRef.current);
+    }
+    for (const item of itemRefs.current.values()) {
+      observer.observe(item);
+    }
+
+    return () => observer.disconnect();
+  }, [activeHref, hoveredHref]);
 
   // Section links need their own scroll: once the hash is in the URL the browser
   // treats another click as a no-op, so clicking again after scrolling away
@@ -97,31 +154,45 @@ export function NavWrap() {
       <div aria-hidden className="nav-tab-mask absolute inset-0 bg-white backdrop-blur-[20px]" />
 
       <ul
+        ref={listRef}
         className="relative flex h-full items-center justify-center gap-1 px-7"
         onMouseLeave={() => setHoveredHref(null)}
       >
+        {pills.hover && (
+          <motion.span
+            aria-hidden
+            initial={false}
+            animate={pills.hover}
+            transition={pillSpring}
+            className="absolute top-0 left-0 rounded-full bg-white/25"
+          />
+        )}
+        {pills.active && (
+          <motion.span
+            aria-hidden
+            initial={false}
+            animate={pills.active}
+            transition={pillSpring}
+            className="absolute top-0 left-0 rounded-full bg-white/70 ring-1 ring-white/50 ring-inset"
+          />
+        )}
+
         {navLinks.map(({ href, label }) => {
           const isActive = isActivePath(pathname, href, projectsActive);
-          const isHovered = hoveredHref === href && !isActive;
 
           return (
-            <li key={href} className="relative" onMouseEnter={() => setHoveredHref(href)}>
-              {isHovered && (
-                <motion.span
-                  aria-hidden
-                  layoutId="nav-hover-pill"
-                  className="absolute inset-0 rounded-full bg-white/25"
-                  transition={pillSpring}
-                />
-              )}
-              {isActive && (
-                <motion.span
-                  aria-hidden
-                  layoutId="nav-active-pill"
-                  className="absolute inset-0 rounded-full bg-white/70 ring-1 ring-white/50 ring-inset"
-                  transition={pillSpring}
-                />
-              )}
+            <li
+              key={href}
+              ref={(node) => {
+                if (node) {
+                  itemRefs.current.set(href, node);
+                } else {
+                  itemRefs.current.delete(href);
+                }
+              }}
+              className="relative"
+              onMouseEnter={() => setHoveredHref(href)}
+            >
               <Link
                 href={href}
                 onClick={(event) => handleNavClick(event, href)}
