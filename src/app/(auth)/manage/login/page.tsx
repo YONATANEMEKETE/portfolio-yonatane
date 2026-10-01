@@ -26,6 +26,13 @@ export default async function ManageLoginPage() {
       <section className="border-line-soft rounded-[16px] border bg-white p-5">
         <LoginForm />
       </section>
+
+      <p className="text-muted-ink font-mono text-[13px]">
+        Forgot the passcode?{' '}
+        <a href="/forgot" className="text-ink underline underline-offset-4 hover:no-underline">
+          Send a reset link
+        </a>
+      </p>
     </div>
   );
 }

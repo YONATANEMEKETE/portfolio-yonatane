@@ -44,3 +44,33 @@ export const loginSchema = z.object({
 });
 
 export type LoginForm = z.infer<typeof loginSchema>;
+
+/**
+ * /forgot only accepts an id the server itself generated (a cuid from the
+ * RecipientEmail table) — there's nothing for the visitor to type, just a
+ * choice to make. Length-capped so a garbage id can't be smuggled through.
+ */
+export const forgotSchema = z.object({
+  recipientEmailId: z.string().min(1, 'Pick an address.').max(64, 'Invalid address.'),
+});
+
+export type ForgotForm = z.infer<typeof forgotSchema>;
+
+/**
+ * /reset: the token arrives from the emailed link, the passcode follows the
+ * same 4–8 rule as /manage/auth (auth.md). Kept as its own schema rather than
+ * extending updatePasscodeSchema — that one is .refine()d, and refined schemas
+ * don't extend cleanly; the two must evolve together, so a comment pins that.
+ */
+export const resetPasscodeSchema = z
+  .object({
+    token: z.string().min(1, 'Missing reset token.').max(128, 'Invalid reset token.'),
+    passcode: z.string().min(4, 'At least 4 characters').max(8, 'At most 8 characters'),
+    confirm: z.string().min(1, 'Confirm the passcode'),
+  })
+  .refine((values) => values.passcode === values.confirm, {
+    message: 'Passcodes do not match.',
+    path: ['confirm'],
+  });
+
+export type ResetPasscodeForm = z.infer<typeof resetPasscodeSchema>;
