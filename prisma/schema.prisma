@@ -49,3 +49,18 @@ model Session {
   createdAt DateTime @default(now())
   expiresAt DateTime
 }
+
+// Recovery + verification links share one lifecycle: a random 256-bit token
+// (raw value only ever in the emailed URL), stored as SHA-256, expiring,
+// single-use. purpose scopes the token; recipientEmailId ties a passcode-reset
+// link to the address it was sent to — requesting a new link marks older
+// unused ones used (auth.md), so only the newest email ever works.
+model OneTimeToken {
+  id               String    @id @default(cuid())
+  tokenHash        String    @unique // sha256 of the raw token from the emailed link
+  purpose          String // "passcode-reset" (email-verify dropped for now)
+  recipientEmailId String?
+  expiresAt        DateTime // 15 min for passcode-reset (auth.md)
+  usedAt           DateTime?
+  createdAt        DateTime  @default(now())
+}
