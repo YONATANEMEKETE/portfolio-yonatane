@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Globe, Pencil, Trash2, Unplug } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { PublishToggleButton } from '@/components/manage/publish-toggle-button';
 
 /** Plain row the manage page hands down — ISO dates keep it serializable. */
 export type ManageArticle = {
@@ -27,9 +28,10 @@ function formatDate(iso: string) {
 
 /**
  * One row in the /manage blogs list: cover thumb, title + excerpt, status and
- * category chips, edit/publish/delete icon buttons (visual for now — the
- * actions land with the edit flow). Hover lifts the card; the buttons fade in
- * over the top-right corner without shifting layout.
+ * category chips, edit/publish/delete icon buttons. Hover lifts the card; the
+ * buttons fade in over the top-right corner without shifting layout.
+ * The card itself stays a server component — the publish toggle is a small
+ * client island so only that button ships JS.
  */
 export function ArticleCard({ article }: { article: ManageArticle }) {
   const published = article.status === 'PUBLISHED';
@@ -49,18 +51,12 @@ export function ArticleCard({ article }: { article: ManageArticle }) {
         >
           <Pencil aria-hidden className="size-4" />
         </Link>
-        <button
-          type="button"
-          title={published ? 'Unpublish article' : 'Publish article'}
-          aria-label={`${published ? 'Unpublish' : 'Publish'} ${article.title}`}
+        <PublishToggleButton
+          id={article.id}
+          title={article.title}
+          published={published}
           className={iconButton}
-        >
-          {published ? (
-            <Unplug aria-hidden className="size-4" />
-          ) : (
-            <Globe aria-hidden className="size-4" />
-          )}
-        </button>
+        />
         <button
           type="button"
           title="Delete article"
