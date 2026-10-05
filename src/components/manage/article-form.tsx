@@ -2,7 +2,8 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { JSONContent } from '@tiptap/core';
-import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import type { z } from 'zod';
 
@@ -12,6 +13,7 @@ import { CategoryTabs } from '@/components/manage/category-tabs';
 import { CoverUploader } from '@/components/manage/cover-uploader';
 import { uploadArticleImage } from '@/components/manage/article-image-upload';
 import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor';
+import { createArticle } from '@/app/(private)/manage/new/actions';
 
 type ArticleFormValues = z.infer<typeof articleSchema>;
 
@@ -36,23 +38,34 @@ const fieldClass = (hasError?: boolean) =>
   );
 
 /**
- * The metadata half of the article editor (M6). UI + client validation only —
- * no submit button yet: Save draft / Publish wire up with the server action
- * and R2 upload in the next step, so the form validates on blur for now.
+ * The article editor (M6). Metadata + Tiptap body in one react-hook-form,
+ * submitted through the createArticle server action as DRAFT or PUBLISHED.
  *
  * Slug follows the title until the owner edits it by hand (slugTouched), then
  * it stays theirs — renaming a title must never silently rewrite a URL.
  */
 export function ArticleForm() {
+  const router = useRouter();
+  const [pendingAction, setPendingAction] = useState<'DRAFT' | 'PUBLISHED' | null>(null);
   const {
     register,
     control,
     setValue,
-    formState: { errors },
+    setError,
+    clearErrors,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid },
   } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema),
-    mode: 'onBlur',
-    defaultValues: { title: '', slug: '', excerpt: '', category: 'TECH', body: EMPTY_BODY },
+    mode: 'onChange',
+    defaultValues: {
+      title: '',
+      slug: '',
+      excerpt: '',
+      category: 'TECH',
+      cover: '',
+      body: EMPTY_BODY,
+    },
   });
 
   const slugTouched = useRef(false);
@@ -63,8 +76,39 @@ export function ArticleForm() {
   const excerpt = useWatch({ control, name: 'excerpt' });
 
   useEffect(() => {
-    if (!slugTouched.current) setValue('slug', slugify(title ?? ''));
+    if (!slugTouched.current) setValue('slug', slugify(title ?? ''), { shouldValidate: true });
   }, [title, setValue]);
+
+  // Two explicit submitters — pendingAction owns the per-button spinner so
+  // only the clicked button shows loading; isSubmitting (RHF) disables both.
+  const submitAs = (status: 'DRAFT' | 'PUBLISHED') =>
+    handleSubmit(async (values) => {
+      clearErrors('root');
+      setPendingAction(status);
+      try {
+        // Tiptap state must cross the client/server boundary as plain JSON:
+        // node attrs have historically carried the upload function (see
+        // image-upload-node.tsx), which arrives as a client reference and
+        // crashes Prisma serialization. The round-trip drops functions.
+        const body = JSON.parse(JSON.stringify(values.body ?? {})) as typeof values.body;
+        const result = await createArticle({ ...values, body, status });
+
+        if (!result.ok) {
+          setError(result.field ?? 'root', { message: result.error });
+          return;
+        }
+
+        router.push('/manage');
+      } catch {
+        setError('root', { message: 'Could not save the article. Try again.' });
+      } finally {
+        setPendingAction(null);
+      }
+    });
+
+  const formInvalid = !isValid || isSubmitting;
+  const draftBusy = pendingAction === 'DRAFT';
+  const publishBusy = pendingAction === 'PUBLISHED';
 
   return (
     <form className="flex flex-col gap-4" noValidate>
@@ -193,6 +237,44 @@ export function ArticleForm() {
         <p role="alert" className="text-destructive font-mono text-[12px]">
           {errors.body?.message}
         </p>
+      </div>
+
+      {/* Submit — Save draft keeps it private, Publish sets publishedAt. */}
+      <div className="flex items-center justify-between gap-3 pt-2">
+        <p
+          role="alert"
+          className={cn('text-destructive font-mono text-[12px]', !errors.root && 'sr-only')}
+        >
+          {errors.root?.message}
+        </p>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            disabled={formInvalid}
+            aria-busy={draftBusy}
+            onClick={submitAs('DRAFT')}
+            className={cn(
+              'border-line-soft text-muted-ink hover:text-ink rounded-full border bg-white px-4 py-2 font-mono text-[13px] transition-colors',
+              formInvalid && 'cursor-not-allowed opacity-50',
+            )}
+          >
+            {draftBusy ? 'Saving…' : 'Save draft'}
+          </button>
+          <button
+            type="button"
+            disabled={formInvalid}
+            aria-busy={publishBusy}
+            onClick={submitAs('PUBLISHED')}
+            className={cn(
+              'border-line-soft from-tile-start to-tile-end text-ink rounded-full border bg-linear-to-b px-4 py-2 font-mono text-[13px] transition-colors',
+              'hover:from-white hover:to-white',
+              formInvalid &&
+                'hover:from-tile-start hover:to-tile-end cursor-not-allowed opacity-50',
+            )}
+          >
+            {publishBusy ? 'Publishing…' : 'Publish'}
+          </button>
+        </div>
       </div>
     </form>
   );

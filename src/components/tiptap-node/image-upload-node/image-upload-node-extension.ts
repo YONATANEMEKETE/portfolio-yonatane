@@ -117,9 +117,17 @@ export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
       setImageUploadNode:
         (options) =>
         ({ commands }) => {
+          // Pick serializable attrs only — options carries the upload
+          // function + callbacks, which must never land in the document
+          // (see image-upload-node.tsx: they break server-action
+          // serialization on save).
+          const attrs: Record<string, unknown> = {};
+          if (options?.accept !== undefined) attrs.accept = options.accept;
+          if (options?.limit !== undefined) attrs.limit = options.limit;
+          if (options?.maxSize !== undefined) attrs.maxSize = options.maxSize;
           return commands.insertContent({
             type: this.name,
-            attrs: options,
+            attrs,
           });
         },
     };

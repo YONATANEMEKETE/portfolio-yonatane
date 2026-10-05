@@ -128,10 +128,28 @@ export const coverKeySchema = z
     'That does not look like a cover image key.',
   );
 
-export const articleBodySchema = z.object({
-  type: z.literal('doc'),
-  content: z.array(z.unknown()),
-});
+export const articleBodySchema = z
+  .object({
+    type: z.literal('doc'),
+    content: z.array(z.unknown()),
+  })
+  .refine((body) => !containsPendingUpload(body), {
+    message: 'Wait for image uploads to finish before saving.',
+  });
+
+/**
+ * An in-flight imageUpload node has no URL yet — saving it would store a
+ * dead upload widget. The doc must only contain finished (image) nodes.
+ */
+function containsPendingUpload(node: unknown): boolean {
+  if (Array.isArray(node)) return node.some(containsPendingUpload);
+  if (node !== null && typeof node === 'object') {
+    const record = node as Record<string, unknown>;
+    if (record.type === 'imageUpload') return true;
+    return Object.values(record).some(containsPendingUpload);
+  }
+  return false;
+}
 
 export const articleSchema = z.object({
   title: z.string().trim().min(1, 'Enter a title.').max(120, 'At most 120 characters.'),

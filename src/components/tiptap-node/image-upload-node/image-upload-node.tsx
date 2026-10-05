@@ -431,10 +431,13 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
       if (isValidPosition(pos)) {
         const imageNodes = urls.map((url, index) => {
           const filename = files[index]?.name.replace(/\.[^/.]+$/, '') || 'unknown';
+          // Serializable attrs only: extension.options carries the upload
+          // function + callbacks, which must never land in the document —
+          // they ride into the server action as client references and blow
+          // up Prisma with a toStringTag access error on save.
           return {
             type: extension.options.type,
             attrs: {
-              ...extension.options,
               src: url,
               alt: filename,
               title: filename,
