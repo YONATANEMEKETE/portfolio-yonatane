@@ -21,6 +21,38 @@ model PageView {
   @@index([createdAt])
 }
 
+// Articles (M3/M6): markdown is gone for bodies — the editor is Tiptap, so
+// body holds the ProseMirror JSON document; HTML is derived at render time
+// with the same pinned extension list the editor uses.
+enum Status {
+  DRAFT
+  PUBLISHED
+}
+
+// Blog split from INSPOS 14 ("tech, all and personal") — "all" is just the
+// unfiltered list, not a stored value.
+enum Category {
+  TECH
+  PERSONAL
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  slug        String    @unique // URL identifier → /blogs/<slug>
+  title       String
+  excerpt     String // required — cards + meta descriptions (~160 chars, enforced in the form)
+  cover       String // required — R2 object key
+  category    Category @default(TECH)
+  body        Json // Tiptap (ProseMirror) document — never stored HTML
+  status      Status    @default(DRAFT)
+  publishedAt DateTime? // set once, on first publish; a typo fix doesn't move a post's birthday
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // The public read path is always status = PUBLISHED ORDER BY publishedAt DESC.
+  @@index([status, publishedAt])
+}
+
 // Yonatane's own addresses for passcode-reset links (auth.md). Plaintext, not
 // hashed: the server must be able to send mail to them — masking happens on the
 // way out. null verifiedAt = added but not yet confirmed via its verification
