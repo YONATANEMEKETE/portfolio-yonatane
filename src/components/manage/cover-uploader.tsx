@@ -18,11 +18,19 @@ const R2_UPLOAD_TIMEOUT_MS = 60_000;
  * key is all the form has, and R2_PUBLIC_URL is server-only. While uploading,
  * the preview shows with a disabled overlay; a failed upload reverts to the
  * plate and shows why.
+ *
+ * In edit mode the form already holds a key: pass it as `value` with its
+ * public URL as `initialUrl` so the current cover renders until the owner
+ * picks a replacement (blob preview) or removes it.
  */
 export function CoverUploader({
+  value,
+  initialUrl = null,
   onChange,
   error,
 }: {
+  value?: string;
+  initialUrl?: string | null;
   onChange: (key: string | null) => void;
   error?: string;
 }) {
@@ -39,6 +47,10 @@ export function CoverUploader({
       if (preview) URL.revokeObjectURL(preview);
     };
   }, [preview]);
+
+  // Edit mode: the form already holds a key. Show its public URL until the
+  // owner picks a replacement (blob preview wins) or removes it.
+  const existing = !preview && value && initialUrl ? initialUrl : null;
 
   async function upload(file: File) {
     // Client-side first so a bad pick never round-trips; the action re-runs
@@ -89,10 +101,14 @@ export function CoverUploader({
         Cover image
       </label>
 
-      {preview ? (
+      {preview || existing ? (
         <div className="border-line-soft relative aspect-[16/9] overflow-hidden rounded-[16px] border bg-white">
-          {/* blob: preview bypasses the image optimizer, hence unoptimized. */}
-          <Image src={preview} alt="Cover preview" unoptimized fill className="object-cover" />
+          {preview ? (
+            /* blob: preview bypasses the image optimizer, hence unoptimized. */
+            <Image src={preview} alt="Cover preview" unoptimized fill className="object-cover" />
+          ) : (
+            existing && <Image src={existing} alt="Current cover" fill className="object-cover" />
+          )}
           {uploading ? (
             <div className="bg-background/70 absolute inset-0 flex items-center justify-center font-mono text-[13px] backdrop-blur-sm">
               Uploading to R2…

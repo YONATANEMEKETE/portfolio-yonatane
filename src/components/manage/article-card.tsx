@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { Globe, Pencil, Trash2, Unplug } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -25,15 +27,50 @@ function formatDate(iso: string) {
 
 /**
  * One row in the /manage blogs list: cover thumb, title + excerpt, status and
- * category chips, last-updated date. Static for now — the edit destination
- * doesn't exist yet, so no link until it does.
+ * category chips, edit/publish/delete icon buttons (visual for now — the
+ * actions land with the edit flow). Hover lifts the card; the buttons fade in
+ * over the top-right corner without shifting layout.
  */
 export function ArticleCard({ article }: { article: ManageArticle }) {
   const published = article.status === 'PUBLISHED';
   const dateLabel = published && article.publishedAt ? formatDate(article.publishedAt) : null;
 
+  const iconButton =
+    'text-muted-ink hover:text-ink hover:bg-ink/5 focus-visible:ring-ink/30 flex size-8 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none';
+
   return (
-    <article className="border-line-soft flex gap-4 rounded-[16px] border bg-white p-3">
+    <article className="border-line-soft group relative flex gap-4 rounded-[16px] border bg-white p-3 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)]">
+      <div className="absolute top-2 right-2 flex items-center gap-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100">
+        <Link
+          href={`/manage/${article.id}/edit`}
+          title="Edit article"
+          aria-label={`Edit ${article.title}`}
+          className={iconButton}
+        >
+          <Pencil aria-hidden className="size-4" />
+        </Link>
+        <button
+          type="button"
+          title={published ? 'Unpublish article' : 'Publish article'}
+          aria-label={`${published ? 'Unpublish' : 'Publish'} ${article.title}`}
+          className={iconButton}
+        >
+          {published ? (
+            <Unplug aria-hidden className="size-4" />
+          ) : (
+            <Globe aria-hidden className="size-4" />
+          )}
+        </button>
+        <button
+          type="button"
+          title="Delete article"
+          aria-label={`Delete ${article.title}`}
+          className={cn(iconButton, 'hover:text-destructive')}
+        >
+          <Trash2 aria-hidden className="size-4" />
+        </button>
+      </div>
+
       <div className="relative h-[88px] w-[120px] shrink-0 overflow-hidden rounded-[10px] bg-[#ececf0]">
         <Image
           src={article.coverUrl}
