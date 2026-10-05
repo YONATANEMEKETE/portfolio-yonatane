@@ -26,6 +26,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1146.0",
+    "@aws-sdk/s3-request-presigner": "^3.1146.0",
     "@calcom/embed-react": "^1.5.3",
     "@hookform/resolvers": "^5.9.1",
     "@node-rs/argon2": "^2.2.1",

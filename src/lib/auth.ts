@@ -1,7 +1,8 @@
 import { hash, verify } from '@node-rs/argon2';
+import { cookies } from 'next/headers';
 
 import { getPrisma } from '@/lib/prisma';
-import { hashSessionToken } from '@/lib/session';
+import { hashSessionToken, SESSION_COOKIE } from '@/lib/session';
 
 /**
  * @node-rs/argon2's defaults are the auth.md spec: Argon2id, m=19456 (19 MiB),
@@ -31,4 +32,14 @@ export async function findValidSession(token: string | undefined) {
   if (!session || session.expiresAt.getTime() <= Date.now()) return null;
 
   return session;
+}
+
+/**
+ * Session gate for server actions. Layouts (and proxy.ts) never run for an
+ * action POST — the request lands straight on the action — so every private
+ * action must check the cookie itself, not trust the page it was rendered in.
+ */
+export async function requireSession() {
+  const cookieStore = await cookies();
+  return findValidSession(cookieStore.get(SESSION_COOKIE)?.value);
 }

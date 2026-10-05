@@ -74,3 +74,75 @@ export const resetPasscodeSchema = z
   });
 
 export type ResetPasscodeForm = z.infer<typeof resetPasscodeSchema>;
+
+/**
+ * Article editor (/manage/new, M6). The five scalar fields — body is Tiptap
+ * state and lands with the editor, not as a form field here. excerpt max is
+ * 160 because it doubles as the meta description (design.md).
+ */
+export const ARTICLE_CATEGORIES = ['TECH', 'PERSONAL'] as const;
+
+/**
+ * R2 cover rules, shared by the picker (client) and the presign action
+ * (server) — one source of truth for what may be uploaded.
+ */
+export const COVER_MIME_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/avif',
+  'image/gif',
+] as const;
+export const COVER_MAX_BYTES = 5 * 1024 * 1024;
+
+/** Validates the picked File before any bytes move. */
+export const coverFileSchema = z
+  .instanceof(File, { message: 'Add a cover image.' })
+  .refine(
+    (file) => (COVER_MIME_TYPES as readonly string[]).includes(file.type),
+    'Cover must be a jpg, png, webp, avif or gif.',
+  )
+  .refine((file) => file.size <= COVER_MAX_BYTES, 'Cover must be under 5 MB.');
+
+/** The presign request: what the browser is about to PUT to R2. */
+export const coverUploadSchema = z.object({
+  name: z.string().min(1, 'Missing file name.').max(200, 'File name too long.'),
+  type: z.enum(COVER_MIME_TYPES),
+  size: z
+    .number()
+    .int()
+    .positive('Missing file size.')
+    .max(COVER_MAX_BYTES, 'Cover must be under 5 MB.'),
+});
+
+/**
+ * The form stores the R2 object key after upload — not the File, not a URL.
+ * The public base lives in R2_PUBLIC_URL and is prefixed at render time, so
+ * the bucket or CDN can change without a data migration.
+ */
+export const coverKeySchema = z
+  .string()
+  .min(1, 'Add a cover image.')
+  .regex(
+    /^articles\/covers\/[a-z0-9]+(?:-[a-z0-9]+)*\.[a-z0-9]+$/,
+    'That does not look like a cover image key.',
+  );
+
+export const articleSchema = z.object({
+  title: z.string().trim().min(1, 'Enter a title.').max(120, 'At most 120 characters.'),
+  slug: z
+    .string()
+    .trim()
+    .min(1, 'Enter a slug.')
+    .max(120, 'At most 120 characters.')
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Lowercase letters, numbers and hyphens only.'),
+  excerpt: z
+    .string()
+    .trim()
+    .min(1, 'Enter an excerpt.')
+    .max(160, 'At most 160 characters — it doubles as the meta description.'),
+  category: z.enum(ARTICLE_CATEGORIES),
+  cover: coverKeySchema,
+});
+
+export type ArticleForm = z.infer<typeof articleSchema>;
