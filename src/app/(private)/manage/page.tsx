@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 // Blogs role of /manage: article list, search, filters, editor (M6).
 export default function ManagePage() {
   return (
@@ -7,9 +9,12 @@ export default function ManagePage() {
           <h1 className="text-ink text-[26px] leading-[34px]">Blogs</h1>
           <p className="text-muted-ink font-mono text-[14px]">Articles, drafts and publishing.</p>
         </div>
-        <span className="border-line-soft text-muted-ink rounded-full border bg-white px-4 py-1.5 font-mono text-[13px]">
+        <Link
+          href="/manage/new"
+          className="border-line-soft text-muted-ink hover:text-ink rounded-full border bg-white px-4 py-1.5 font-mono text-[13px] transition-colors"
+        >
           + New article
-        </span>
+        </Link>
       </div>
 
       {/* Placeholder list — real rows, filters and search land in M6. */}
