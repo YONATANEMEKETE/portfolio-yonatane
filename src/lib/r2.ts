@@ -81,6 +81,10 @@ export function coverKey(name: string, type: (typeof COVER_MIME_TYPES)[number]) 
   return `articles/covers/${slugBase(name)}-${randomBytes(4).toString('hex')}.${EXT_BY_TYPE[type]}`;
 }
 
+export function articleImageKey(name: string, type: (typeof COVER_MIME_TYPES)[number]) {
+  return `articles/images/${slugBase(name)}-${randomBytes(4).toString('hex')}.${EXT_BY_TYPE[type]}`;
+}
+
 /**
  * The presigned PUT. What actually makes it safe: the key is random and
  * unguessable, the rules (type/size) were validated server-side before
@@ -104,4 +108,25 @@ export async function presignCoverUpload({
   );
 
   return { key, uploadUrl };
+}
+
+export async function presignArticleImageUpload({
+  name,
+  type,
+}: {
+  name: string;
+  type: (typeof COVER_MIME_TYPES)[number];
+}) {
+  const key = articleImageKey(name, type);
+  const uploadUrl = await getSignedUrl(
+    getClient(),
+    new PutObjectCommand({ Bucket: requireEnv('R2_BUCKET_NAME'), Key: key, ContentType: type }),
+    { expiresIn: PRESIGN_EXPIRES_SECONDS },
+  );
+
+  return { key, uploadUrl };
+}
+
+export function articleImagePublicUrl(key: string) {
+  return coverPublicUrl(key);
 }

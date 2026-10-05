@@ -8,6 +8,7 @@ overrides:
   deepmerge-ts: ^8.0.0
 
 allowBuilds:
+  '@parcel/watcher': true
   '@prisma/engines': true
   esbuild: true
   prisma: true

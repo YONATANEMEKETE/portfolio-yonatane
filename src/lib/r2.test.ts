@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { coverKey, coverPublicUrl, presignCoverUpload, PRESIGN_EXPIRES_SECONDS } from './r2';
+import {
+  articleImageKey,
+  coverKey,
+  coverPublicUrl,
+  presignCoverUpload,
+  PRESIGN_EXPIRES_SECONDS,
+} from './r2';
 
 beforeEach(() => {
   vi.stubEnv('R2_ACCOUNT_ID', 'test-account');
@@ -44,6 +50,14 @@ describe('coverPublicUrl', () => {
   it('throws when the base is not configured', () => {
     vi.stubEnv('R2_PUBLIC_URL', undefined);
     expect(() => coverPublicUrl('articles/covers/x.png')).toThrow('R2_PUBLIC_URL');
+  });
+});
+
+describe('articleImageKey', () => {
+  it('keeps inline images in their own R2 prefix', () => {
+    expect(articleImageKey('Body image.webp', 'image/webp')).toMatch(
+      /^articles\/images\/body-image-[0-9a-f]{8}\.webp$/,
+    );
   });
 });
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { JSONContent } from '@tiptap/core';
 import { useEffect, useRef } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import type { z } from 'zod';
@@ -9,6 +10,8 @@ import { articleSchema } from '@/lib/validation';
 import { cn } from '@/lib/utils';
 import { CategoryTabs } from '@/components/manage/category-tabs';
 import { CoverUploader } from '@/components/manage/cover-uploader';
+import { uploadArticleImage } from '@/components/manage/article-image-upload';
+import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor';
 
 type ArticleFormValues = z.infer<typeof articleSchema>;
 
@@ -23,6 +26,7 @@ function slugify(value: string) {
 }
 
 const EXCERPT_MAX = 160;
+const EMPTY_BODY = { type: 'doc' as const, content: [{ type: 'paragraph' }] };
 
 const fieldClass = (hasError?: boolean) =>
   cn(
@@ -48,7 +52,7 @@ export function ArticleForm() {
   } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema),
     mode: 'onBlur',
-    defaultValues: { title: '', slug: '', excerpt: '', category: 'TECH' },
+    defaultValues: { title: '', slug: '', excerpt: '', category: 'TECH', body: EMPTY_BODY },
   });
 
   const slugTouched = useRef(false);
@@ -165,6 +169,31 @@ export function ArticleForm() {
           />
         )}
       />
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-muted-ink font-mono text-[13px]" htmlFor="article-body">
+          Body
+        </label>
+        <Controller
+          control={control}
+          name="body"
+          render={({ field }) => (
+            <div
+              id="article-body"
+              className="border-line-soft overflow-hidden rounded-[16px] border bg-white"
+            >
+              <SimpleEditor
+                content={field.value as JSONContent}
+                onChange={(value) => field.onChange(value)}
+                uploadImage={uploadArticleImage}
+              />
+            </div>
+          )}
+        />
+        <p role="alert" className="text-destructive font-mono text-[12px]">
+          {errors.body?.message}
+        </p>
+      </div>
     </form>
   );
 }

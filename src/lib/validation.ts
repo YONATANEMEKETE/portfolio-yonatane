@@ -128,6 +128,11 @@ export const coverKeySchema = z
     'That does not look like a cover image key.',
   );
 
+export const articleBodySchema = z.object({
+  type: z.literal('doc'),
+  content: z.array(z.unknown()),
+});
+
 export const articleSchema = z.object({
   title: z.string().trim().min(1, 'Enter a title.').max(120, 'At most 120 characters.'),
   slug: z
@@ -143,6 +148,7 @@ export const articleSchema = z.object({
     .max(160, 'At most 160 characters — it doubles as the meta description.'),
   category: z.enum(ARTICLE_CATEGORIES),
   cover: coverKeySchema,
+  body: articleBodySchema,
 });
 
 export type ArticleForm = z.infer<typeof articleSchema>;

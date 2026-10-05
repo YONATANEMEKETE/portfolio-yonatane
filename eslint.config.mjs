@@ -19,8 +19,16 @@ const eslintConfig = defineConfig([
     'coverage/**',
     '.husky/**',
     'public/**',
+    // Local Tiptap source/docs references used for implementation guidance:
+    '.reference/**',
     // Prisma-generated client:
     'src/generated/**',
+    // Tiptap CLI source is vendored as editable template code. Its upstream
+    // React patterns intentionally predate this app's stricter React lint rules.
+    'src/components/tiptap-*/**',
+    'src/hooks/use-*.ts',
+    'src/lib/tiptap-utils.ts',
+    'src/scss.d.ts',
   ]),
 ]);
 
