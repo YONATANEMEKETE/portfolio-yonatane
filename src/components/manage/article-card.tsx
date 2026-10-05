@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { DeleteArticleButton } from '@/components/manage/delete-article-button';
 import { PublishToggleButton } from '@/components/manage/publish-toggle-button';
 
 /** Plain row the manage page hands down — ISO dates keep it serializable. */
@@ -57,14 +58,7 @@ export function ArticleCard({ article }: { article: ManageArticle }) {
           published={published}
           className={iconButton}
         />
-        <button
-          type="button"
-          title="Delete article"
-          aria-label={`Delete ${article.title}`}
-          className={cn(iconButton, 'hover:text-destructive')}
-        >
-          <Trash2 aria-hidden className="size-4" />
-        </button>
+        <DeleteArticleButton id={article.id} title={article.title} className={iconButton} />
       </div>
 
       <div className="relative h-[88px] w-[120px] shrink-0 overflow-hidden rounded-[10px] bg-[#ececf0]">
