@@ -1,5 +1,6 @@
 import { Container } from '@/components/layout/container';
 import { BioSection } from '@/components/sections/bio-section';
+import { BlogsSection } from '@/components/sections/blogs-section';
 import { ContributionsSection } from '@/components/sections/contributions-section';
 import { ExperienceSection } from '@/components/sections/experience-section';
 import { ProjectsSection } from '@/components/sections/projects-section';
@@ -19,6 +20,7 @@ export default function Home() {
         <ExperienceSection />
         <TechStackSection />
         <ProjectsSection />
+        <BlogsSection />
       </Container>
     </main>
   );

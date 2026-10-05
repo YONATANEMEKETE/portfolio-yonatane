@@ -17,19 +17,29 @@ import { cn } from '@/lib/utils';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/#projects', label: 'Projects' },
-  { href: '/blogs', label: 'Blogs' },
+  { href: '/#blogs', label: 'Blogs' },
 ];
 
 const projectsSectionId = 'projects';
+const blogsSectionId = 'blogs';
 
-function isActivePath(pathname: string, href: string, projectsInView: boolean) {
+function isActivePath(
+  pathname: string,
+  href: string,
+  projectsInView: boolean,
+  blogsInView: boolean,
+) {
   if (href === '/') {
-    return pathname === '/' && !projectsInView;
+    return pathname === '/' && !projectsInView && !blogsInView;
   }
 
   // The details pages are part of the projects area, so the link is already home.
   if (href === `/#${projectsSectionId}`) {
     return projectsInView || pathname.startsWith('/projects/');
+  }
+
+  if (href === `/#${blogsSectionId}`) {
+    return blogsInView || pathname.startsWith('/blogs');
   }
 
   return pathname.startsWith(href);
@@ -39,24 +49,35 @@ export function NavWrap() {
   const pathname = usePathname();
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [projectsInView, setProjectsInView] = useState(false);
+  const [blogsInView, setBlogsInView] = useState(false);
 
   useEffect(() => {
     if (pathname !== '/') {
       return;
     }
 
-    const section = document.getElementById(projectsSectionId);
-    if (!section) {
+    const projectsSection = document.getElementById(projectsSectionId);
+    const blogsSection = document.getElementById(blogsSectionId);
+    if (!projectsSection && !blogsSection) {
       return;
     }
 
     const observer = new IntersectionObserver(
-      (entries) => setProjectsInView(entries.some((entry) => entry.isIntersecting)),
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.target.id === projectsSectionId) {
+            setProjectsInView(entry.isIntersecting);
+          } else if (entry.target.id === blogsSectionId) {
+            setBlogsInView(entry.isIntersecting);
+          }
+        }
+      },
       // A thin band across the middle of the viewport: the section counts as
       // active while it crosses the centre of the screen, however tall it is.
       { rootMargin: '-45% 0px -45% 0px' },
     );
-    observer.observe(section);
+    if (projectsSection) observer.observe(projectsSection);
+    if (blogsSection) observer.observe(blogsSection);
 
     return () => observer.disconnect();
   }, [pathname]);
@@ -64,8 +85,10 @@ export function NavWrap() {
   // Gated on the pathname so a stale observation from the home page cannot mark
   // the link active on another route.
   const projectsActive = pathname === '/' && projectsInView;
+  const blogsActive = pathname === '/' && blogsInView;
   const activeHref =
-    navLinks.find(({ href }) => isActivePath(pathname, href, projectsActive))?.href ?? null;
+    navLinks.find(({ href }) => isActivePath(pathname, href, projectsActive, blogsActive))?.href ??
+    null;
 
   // Shared pill geometry: measured against the list, animated with pillSpring.
   const { listRef, itemRefs, pills } = usePills<HTMLUListElement, HTMLLIElement>({
@@ -128,7 +151,7 @@ export function NavWrap() {
         )}
 
         {navLinks.map(({ href, label }) => {
-          const isActive = isActivePath(pathname, href, projectsActive);
+          const isActive = isActivePath(pathname, href, projectsActive, blogsActive);
 
           return (
             <li
