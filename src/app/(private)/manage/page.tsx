@@ -1,16 +1,58 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 
+import type { Prisma } from '@/generated/prisma/client';
 import { getPrisma } from '@/lib/prisma';
 import { coverPublicUrl } from '@/lib/r2';
 
 import { ArticleCard, type ManageArticle } from '@/components/manage/article-card';
+import { ArticleFilters } from '@/components/manage/article-filters';
 
 // The list reads live rows — without this, `next build` would prerender the
 // page and freeze whatever the DB held at build time.
 export const dynamic = 'force-dynamic';
 
-async function loadArticles(): Promise<ManageArticle[]> {
+type ArticleFilter = {
+  query: string;
+  category: 'all' | 'TECH' | 'PERSONAL';
+  status: 'all' | 'PUBLISHED' | 'DRAFT';
+};
+
+function parseFilters(searchParams: {
+  q?: string | string[];
+  category?: string | string[];
+  status?: string | string[];
+}): ArticleFilter {
+  const query = typeof searchParams.q === 'string' ? searchParams.q.trim().slice(0, 100) : '';
+  const category =
+    searchParams.category === 'TECH' || searchParams.category === 'PERSONAL'
+      ? searchParams.category
+      : 'all';
+  const status =
+    searchParams.status === 'PUBLISHED' || searchParams.status === 'DRAFT'
+      ? searchParams.status
+      : 'all';
+
+  return { query, category, status };
+}
+
+async function loadArticles(filter: ArticleFilter): Promise<ManageArticle[]> {
+  // Unknown keys are ignored above — Prisma only ever sees valid enums.
+  const where: Prisma.ArticleWhereInput = {
+    ...(filter.category !== 'all' ? { category: filter.category } : {}),
+    ...(filter.status !== 'all' ? { status: filter.status } : {}),
+    ...(filter.query
+      ? {
+          OR: [
+            { title: { contains: filter.query, mode: 'insensitive' } },
+            { excerpt: { contains: filter.query, mode: 'insensitive' } },
+          ],
+        }
+      : {}),
+  };
+
   const rows = await getPrisma().article.findMany({
+    where,
     orderBy: { updatedAt: 'desc' },
     select: {
       id: true,
@@ -39,9 +81,19 @@ async function loadArticles(): Promise<ManageArticle[]> {
   }));
 }
 
-// Blogs role of /manage: article list, search, filters, editor (M6).
-export default async function ManagePage() {
-  const articles = await loadArticles();
+// Blogs role of /manage: article list with search, category and status filters.
+export default async function ManagePage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    q?: string | string[];
+    category?: string | string[];
+    status?: string | string[];
+  }>;
+}) {
+  const filter = parseFilters(await searchParams);
+  const articles = await loadArticles(filter);
+  const filtering = filter.query !== '' || filter.category !== 'all' || filter.status !== 'all';
 
   return (
     <div className="flex flex-col gap-4">
@@ -58,9 +110,20 @@ export default async function ManagePage() {
         </Link>
       </div>
 
+      {/* useSearchParams needs a Suspense boundary in a prerendered tree. */}
+      <Suspense>
+        <ArticleFilters
+          initialQuery={filter.query}
+          initialCategory={filter.category}
+          initialStatus={filter.status}
+        />
+      </Suspense>
+
       {articles.length === 0 ? (
         <div className="border-line-soft text-muted-ink flex items-center justify-center rounded-[16px] border bg-white py-20 font-mono text-[13px]">
-          No articles yet — write your first one.
+          {filtering
+            ? 'No articles match these filters.'
+            : 'No articles yet — write your first one.'}
         </div>
       ) : (
         <div className="flex flex-col gap-3">
