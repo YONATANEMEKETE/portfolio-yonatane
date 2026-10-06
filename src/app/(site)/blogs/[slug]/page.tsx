@@ -10,6 +10,7 @@ import { Container } from '@/components/layout/container';
 import { HandNote } from '@/components/layout/hand-note';
 import { ShareButton } from '@/components/share-button';
 import { TiptapBody } from '@/components/tiptap-body';
+import { ImageZoom } from '@/components/kibo-ui/image-zoom';
 
 export async function generateMetadata(props: PageProps<'/blogs/[slug]'>): Promise<Metadata> {
   const { slug } = await props.params;
@@ -79,15 +80,20 @@ export default async function BlogDetailsPage(props: PageProps<'/blogs/[slug]'>)
 
         {/* Same glass ring as the project details cover. */}
         <div className="mt-6 rounded-[20px] border border-[#d8d8dc] bg-white/70 p-1 backdrop-blur-[12px]">
-          <div className="relative h-80 w-full overflow-hidden rounded-[16px] bg-[#ececf0]">
-            <Image
-              src={article.coverUrl}
-              alt={`${article.title} cover`}
-              fill
-              preload
-              sizes="(max-width: 768px) 100vw, 768px"
-              className="object-cover"
-            />
+          <div className="relative aspect-video w-full overflow-hidden rounded-[16px] bg-[#ececf0]">
+            <ImageZoom
+              withRing
+              className="size-full [&_[data-rmiz-content]]:size-full [&_[data-rmiz]]:size-full"
+            >
+              <Image
+                src={article.coverUrl}
+                alt={`${article.title} cover`}
+                fill
+                preload
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="rounded-[16px] object-cover"
+              />
+            </ImageZoom>
           </div>
         </div>
 
