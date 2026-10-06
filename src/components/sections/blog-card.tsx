@@ -4,22 +4,32 @@ import { ArrowUpRight } from 'lucide-react';
 import type { FeaturedPost } from '@/lib/featured-posts';
 import { formatArticleDate, formatReadTime } from '@/lib/format';
 
+export type BlogCardPost = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  readTime: number;
+  publishedAt: string | null;
+  category?: 'TECH' | 'PERSONAL';
+};
+
 type BlogCardProps = {
-  post: FeaturedPost;
+  post: BlogCardPost;
   /** 1-based position — the design numbers rows 01, 02, 03. */
   index: number;
 };
 
 /**
- * One row in the home "Featured Blogs" list. Follows the Pencil row: index +
+ * One row in the "Blogs" list. Follows the Pencil row: index +
  * title, excerpt, mono meta, and a circular open button on the right. The
  * whole row is one link (stretched via after:inset-0), so the button is
  * decorative — screen readers get a single named link per post.
  */
 export function BlogCard({ post, index }: BlogCardProps) {
-  const meta = post.publishedAt
-    ? `${formatArticleDate(post.publishedAt)} · ${formatReadTime(post.readTime)}`
-    : formatReadTime(post.readTime);
+  const categoryLabel = post.category ? (post.category === 'TECH' ? 'Tech' : 'Personal') : null;
+  const dateStr = post.publishedAt ? formatArticleDate(post.publishedAt) : null;
+  const timeStr = formatReadTime(post.readTime);
+  const meta = [categoryLabel, dateStr, timeStr].filter(Boolean).join(' · ');
 
   return (
     <article className="group relative flex items-center gap-4 py-5 transition-colors duration-200">
