@@ -111,7 +111,7 @@ const socials: { label: string; href: string; icon: Glyph; embed?: 'cal' }[] = [
   },
   {
     label: 'Resume',
-    href: 'https://drive.google.com/file/d/1p7EW380Rc8TnJwYP8US16JOC11ry582_/view?usp=sharing',
+    href: 'https://drive.google.com/file/d/15MoMlM-VXsptKP0K0ry9Z0EO5n7udcES/view?usp=drive_link',
     icon: {
       d: 'M832 384h-256v-256h-384v768h640z m-26.5-64l-165.5-165.5v165.5z m-645.5-256h480l256 256v608a32 32 0 0 1-32 32h-704a32 32 0 0 1-32-32v-832a32 32 0 0 1 32-32m160 448h384v64h-384z m0-192h160v64h-160z m0 384h384v64h-384z',
       viewBox: '0 0 1024 1024',

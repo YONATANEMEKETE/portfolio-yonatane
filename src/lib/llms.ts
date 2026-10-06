@@ -87,7 +87,7 @@ export async function generateLlmsTxt(baseUrl = 'https://yonatanem.com'): Promis
   lines.push(`- **X (Twitter)**: https://x.com/Yonatanem2`);
   lines.push(`- **Book a Call**: https://cal.com/yonatan-mekete`);
   lines.push(
-    `- **Resume**: https://drive.google.com/file/d/1p7EW380Rc8TnJwYP8US16JOC11ry582_/view?usp=sharing`,
+    `- **Resume**: https://drive.google.com/file/d/15MoMlM-VXsptKP0K0ry9Z0EO5n7udcES/view?usp=drive_link`,
   );
   lines.push(``);
 
