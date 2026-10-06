@@ -125,6 +125,8 @@ export default async function ProjectDetailsPage(props: PageProps<'/projects/[sl
         <div className="mt-8">
           <Markdown source={details} />
         </div>
+
+        <div aria-hidden className="mt-10 h-px w-full bg-[#ececf0]" />
       </Container>
     </main>
   );
