@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Blogs',
-  description: 'Articles and thoughts on software engineering, design, and web architecture.',
+  description: 'A little tech, a little heart, and things I probably shouldn’t say out loud.',
 };
 
 type CategoryFilter = 'all' | 'TECH' | 'PERSONAL';
@@ -166,7 +166,8 @@ export default async function BlogsPage({
           <p className="text-[15px] leading-[18px] text-[#9ca3af]">Writing</p>
           <h1 className="text-ink text-[32px] leading-[38px] font-bold">All Blogs</h1>
           <p className="text-muted-ink max-w-xl text-[15px] leading-[22px]">
-            Thoughts on software engineering, web architectures, and design craft.
+            A little tech, a little heart, and things I probably shouldn&apos;t say out loud. Stay a
+            while, I don&apos;t bite.
           </p>
         </header>
 
