@@ -50,9 +50,9 @@ export function BlogCard({ post, index }: BlogCardProps) {
 
       <span
         aria-hidden
-        className="border-line flex size-11 shrink-0 items-center justify-center rounded-full border bg-transparent transition-all duration-300 ease-out group-hover:border-[#111111] group-hover:bg-[#111111] group-hover:[&>svg]:text-white"
+        className="border-line flex size-11 shrink-0 items-center justify-center rounded-full border bg-transparent transition-all duration-300 ease-in-out group-hover:border-[#111111] group-hover:bg-[#111111] group-hover:[&>svg]:text-white"
       >
-        <ArrowUpRight className="text-ink size-[18px] transition-colors duration-300" />
+        <ArrowUpRight className="text-ink size-[18px] transform-gpu transition-all duration-300 ease-in-out group-hover:translate-x-1 group-hover:-translate-y-1" />
       </span>
 
       <Link

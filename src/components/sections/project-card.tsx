@@ -42,7 +42,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const chips = stack.slice(0, 3);
 
   return (
-    <div className="rounded-[20px] border border-[#d8d8dc] bg-white/70 p-1 backdrop-blur-[12px] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)]">
+    <div className="rounded-[20px] border border-[#d8d8dc] bg-white/70 p-1 backdrop-blur-[12px]">
       <article className="border-line-soft hover:border-ghost relative flex h-full flex-col overflow-hidden rounded-[16px] border bg-white transition-colors duration-200">
         <div className="relative h-[190px] w-full shrink-0 overflow-hidden bg-[#ececf0]">
           <Image

@@ -1,5 +1,8 @@
+'use client';
+
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 
 import type { Experience } from '@/content/experience';
 import { cn } from '@/lib/utils';
@@ -57,7 +60,7 @@ export function ExperienceCard({ experience, open, onToggle }: ExperienceCardPro
             <ChevronDown
               aria-hidden
               className={cn(
-                'text-muted-ink size-[18px] transition-transform duration-300',
+                'text-muted-ink size-[18px] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none',
                 open && 'rotate-180',
               )}
             />
@@ -65,50 +68,58 @@ export function ExperienceCard({ experience, open, onToggle }: ExperienceCardPro
         </button>
       </h3>
 
-      {/* Animating the grid track from 0fr to 1fr expands to the body's natural
-          height, which a height transition cannot do without measuring it. */}
-      <div
-        id={bodyId}
-        aria-hidden={!open}
-        className={cn(
-          'grid transition-[grid-template-rows] duration-300 ease-out',
-          open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-        )}
-      >
-        {/* `relative` matters: rough-notation inserts its <svg> as an absolutely
-            positioned sibling of the marked text, and only a containing block
-            inside this overflow-hidden box is clipped while the card is
-            collapsed — otherwise the lines paint over the closed card. */}
-        <div className="relative overflow-hidden">
-          <div className="border-line-soft border-t px-5 pt-4 pb-5">
-            <p className="text-ink text-[14px] leading-[17px] font-bold">
-              Technologies &amp; Tools
-            </p>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {tools.map((tool) => (
-                <ToolCard key={tool.name} {...tool} />
-              ))}
-            </ul>
+      {/* Motion measures the body's height and animates it directly, so the
+          expand tracks the content frame-by-frame instead of easing a grid
+          track the browser must re-resolve. Opacity rides the same curve. The
+          inner overflow-hidden keeps the rough-notation SVGs clipped while
+          collapsed — they are absolutely positioned siblings of the marked
+          text, so without a containing block they would paint over the card. */}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="body"
+            id={bodyId}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="relative overflow-hidden">
+              <div className="border-line-soft border-t px-5 pt-4 pb-5">
+                <p className="text-ink text-[14px] leading-[17px] font-bold">
+                  Technologies &amp; Tools
+                </p>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {tools.map((tool) => (
+                    <ToolCard key={tool.name} {...tool} />
+                  ))}
+                </ul>
 
-            <p className="text-ink mt-5 text-[14px] leading-[17px] font-bold">
-              What I&apos;ve done
-            </p>
-            <ul className="mt-3 flex flex-col gap-2">
-              {done.map((line) => (
-                <li key={line} className="text-body-soft flex gap-2.5 text-[15px] leading-[1.5]">
-                  <span
-                    aria-hidden
-                    className="bg-contrib-2 mt-2 size-[6px] shrink-0 rounded-[1px]"
-                  />
-                  <span>
-                    <Emphasise text={line} />
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+                <p className="text-ink mt-5 text-[14px] leading-[17px] font-bold">
+                  What I&apos;ve done
+                </p>
+                <ul className="mt-3 flex flex-col gap-2">
+                  {done.map((line) => (
+                    <li
+                      key={line}
+                      className="text-body-soft flex gap-2.5 text-[15px] leading-[1.5]"
+                    >
+                      <span
+                        aria-hidden
+                        className="bg-contrib-2 mt-2 size-[6px] shrink-0 rounded-[1px]"
+                      />
+                      <span>
+                        <Emphasise text={line} />
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </article>
   );
 }

@@ -4,7 +4,6 @@ import { useLayoutEffect, useRef } from 'react';
 import type React from 'react';
 import { useInView } from 'motion/react';
 import { annotate } from 'rough-notation';
-import { type RoughAnnotation } from 'rough-notation/lib/model';
 
 type AnnotationAction =
   'highlight' | 'underline' | 'box' | 'circle' | 'strike-through' | 'crossed-off' | 'bracket';
@@ -44,38 +43,24 @@ export function Highlighter({
 
   useLayoutEffect(() => {
     const element = elementRef.current;
-    let annotation: RoughAnnotation | null = null;
-    let resizeObserver: ResizeObserver | null = null;
+    if (!shouldShow || !element) return;
 
-    if (shouldShow && element) {
-      const annotationConfig = {
-        type: action,
-        color,
-        strokeWidth,
-        animationDuration,
-        iterations,
-        padding,
-        multiline,
-      };
-
-      const currentAnnotation = annotate(element, annotationConfig);
-      annotation = currentAnnotation;
-      currentAnnotation.show();
-
-      resizeObserver = new ResizeObserver(() => {
-        currentAnnotation.hide();
-        currentAnnotation.show();
-      });
-
-      resizeObserver.observe(element);
-      resizeObserver.observe(document.body);
-    }
+    // rough-notation observes the element itself and re-renders silently when
+    // its rects change, so no ResizeObserver here — an extra one only doubles
+    // the redraw and replays the draw animation.
+    const annotation = annotate(element, {
+      type: action,
+      color,
+      strokeWidth,
+      animationDuration,
+      iterations,
+      padding,
+      multiline,
+    });
+    annotation.show();
 
     return () => {
-      annotation?.remove();
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
+      annotation.remove();
     };
   }, [shouldShow, action, color, strokeWidth, animationDuration, iterations, padding, multiline]);
 

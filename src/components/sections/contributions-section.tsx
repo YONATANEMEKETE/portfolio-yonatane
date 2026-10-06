@@ -5,8 +5,22 @@ import { GitHubCalendar } from 'react-github-calendar';
 // Required by the calendar's hover tooltips.
 import 'react-github-calendar/tooltips.css';
 
+import type { Activity } from 'react-github-calendar';
+
 import { activityTooltip, legendTooltip, maxContributionLevel } from '@/lib/contributions';
 import { ContributionsSkeleton } from './contributions-skeleton';
+
+// GitHub grades levels on quartiles of *your* active days — with 1900+ commits
+// spread over 182 days, most days land at level 0-1 and the graph reads dead.
+// Floor every contributing day to at least level 2 and bump the rest up one,
+// so real activity actually shows color. Level 0 stays level 0 (a true rest
+// day), it just sits close to level 1 in the theme.
+function boostLevels(activities: Activity[]) {
+  return activities.map((activity) => ({
+    ...activity,
+    level: Math.min(4, activity.level === 0 ? 0 : activity.level + 1) as Activity['level'],
+  }));
+}
 
 // Detects hydration without an effect: the server snapshot is false, the client's
 // is true, so the calendar only renders once hydrated.
@@ -14,11 +28,11 @@ const subscribe = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
 
-// The design's five contribution steps, identical to the --contrib-* tokens.
-// A deliberately narrow grey band: even a zero day is mid-light, so the graph
-// reads as one texture rather than bright paper with a few dark squares.
+// Light-blue quiet days, brighter-blue active days: levels 0-4 climb from a
+// very pale blue to the brand blue so quiet days blend smoothly into
+// contributing days.
 const contributionTheme = {
-  light: ['#D9D9DE', '#C2C2C9', '#A6A6AE', '#8A8A93', '#6B7280'],
+  light: ['#E8F1FF', '#D0E5FF', '#93C2FF', '#54A0FF', '#2F80ED'],
 };
 
 // The design's grid is 53 weeks of 10px squares; 4.58px gaps stretch it to the
@@ -47,6 +61,7 @@ export function ContributionsSection() {
             fontSize={12}
             maxLevel={maxContributionLevel}
             theme={contributionTheme}
+            transformData={boostLevels}
             labels={{
               // "year" would print the range's start year ("in 2025") while the graph
               // covers the last 12 months, so the wording stays range-accurate.

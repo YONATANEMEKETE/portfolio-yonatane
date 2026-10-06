@@ -94,11 +94,11 @@
   --warning: #f59e0b;
   --code-bg: #f6f6f8;
   --code-ink: #1f2937;
-  --contrib-0: #d9d9de;
-  --contrib-1: #c2c2c9;
-  --contrib-2: #a6a6ae;
-  --contrib-3: #8a8a93;
-  --contrib-4: #6b7280;
+  --contrib-0: #e8f1ff;
+  --contrib-1: #d0e5ff;
+  --contrib-2: #93c2ff;
+  --contrib-3: #54a0ff;
+  --contrib-4: #2f80ed;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -239,7 +239,7 @@
 /*
  * Contributions graph — wave loading skeleton.
  * Narrow dark band sweeping left → right: 3 dark → 2 mid → 2 light trailing.
- * Background (skeleton) and fill (library) both animate through the same grey ramp
+ * Background (skeleton) and fill (library) both animate through the same blue ramp
  * so the texture matches the real graph. Duration 1.65s, per-column delay 28ms
  * gives a ~7-column (≈102px) band at any moment.
  */
