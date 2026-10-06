@@ -5,37 +5,17 @@ import { ArrowRight } from 'lucide-react';
 import { getFeaturedPosts } from '@/lib/featured-posts';
 
 import { BlogCard } from '@/components/sections/blog-card';
+import { BlogsError } from '@/components/sections/blogs-error';
+import { BlogsSkeleton } from '@/components/sections/blogs-skeleton';
+import { EmptyBlogs } from '@/components/sections/empty-blogs';
+
+export { BlogsError, BlogsSkeleton, EmptyBlogs };
 
 /**
  * The `Blogs` id the nav link scrolls to. The home page only features the
  * three newest posts — `/blogs` is the full archive.
  */
 export const blogsSectionId = 'blogs';
-
-/** Skeleton rows that hold the section's footprint while the posts stream in. */
-function BlogsSkeleton() {
-  return (
-    <div aria-hidden className="flex flex-col">
-      <div className="h-px w-full bg-[#ececf0]" />
-      {[0, 1, 2].map((row) => (
-        <div key={row}>
-          <div className="flex animate-pulse items-center gap-4 py-5">
-            <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <div className="flex items-center gap-3">
-                <div className="h-4 w-6 rounded bg-[#ececf0]" />
-                <div className="h-5 min-w-0 flex-1 rounded bg-[#ececf0]" />
-              </div>
-              <div className="ml-9 h-4 w-4/5 rounded bg-[#f1f1f4]" />
-              <div className="ml-9 h-3 w-32 rounded bg-[#f1f1f4]" />
-            </div>
-            <div className="border-line size-11 shrink-0 rounded-full border" />
-          </div>
-          <div className="h-px w-full bg-[#ececf0]" />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 /**
  * The featured list itself, split out so the section chrome (heading, hairline)
@@ -47,15 +27,13 @@ async function FeaturedPosts() {
     posts = await getFeaturedPosts();
   } catch (error) {
     // A DB outage must not blank the home page — the section degrades to a
-    // quiet line and the archive link instead of throwing the whole route.
+    // quiet inline error card with an archive link instead of throwing the whole route.
     console.error('FeaturedPosts failed', error);
-    return (
-      <p className="py-5 font-mono text-[13px] text-[#9ca3af]">Writing is unavailable right now.</p>
-    );
+    return <BlogsError />;
   }
 
   if (posts.length === 0) {
-    return null;
+    return <EmptyBlogs />;
   }
 
   return (
