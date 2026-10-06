@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 /**
  * Rendered when there are no featured articles on the home page.
@@ -16,7 +16,7 @@ export function EmptyBlogs() {
         <div className="flex flex-col gap-1">
           <p className="text-ink text-[16px] font-semibold">Cooking up something fresh</p>
           <p className="text-muted-ink max-w-sm font-mono text-[13px] leading-relaxed">
-            New deep-dives on systems, code, and craft are simmering in the drafts. Hang tight — or
+            New deep-dives on systems, code, and craft are simmering in the drafts. Hang tight, or
             take a detour through the archive in the meantime.
           </p>
         </div>
@@ -24,11 +24,11 @@ export function EmptyBlogs() {
           href="/blogs"
           className="group border-line-soft text-ink hover:bg-tile-start mt-2 inline-flex items-center gap-1.5 rounded-full border bg-white px-4 py-1.5 font-mono text-[12px] font-medium transition-colors"
         >
-          <ArrowLeft
-            aria-hidden
-            className="size-3.5 transition-transform duration-200 ease-out group-hover:-translate-x-1"
-          />
           <span>View all blogs</span>
+          <ArrowRight
+            aria-hidden
+            className="size-3.5 transition-transform duration-200 ease-out group-hover:translate-x-1"
+          />
         </Link>
       </div>
       <div aria-hidden className="h-px w-full bg-[#ececf0]" />

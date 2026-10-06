@@ -12,7 +12,7 @@ describe('EmptyBlogs', () => {
     expect(html).toContain('Cooking up something fresh');
     expect(html).toContain('href="/blogs"');
     expect(html).toContain('View all blogs');
-    expect(html).toContain('group-hover:-translate-x-1');
+    expect(html).toContain('group-hover:translate-x-1');
   });
 });
 
