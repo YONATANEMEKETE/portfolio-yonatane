@@ -5,8 +5,8 @@ export type FeaturedPost = {
   slug: string;
   title: string;
   excerpt: string;
-  /** Tiptap JSON body — only used to derive the "9 min read" label. */
-  body: unknown;
+  /** Read time in minutes. */
+  readTime: number;
   /** ISO date; the card renders "Mar 2026". Null when never published. */
   publishedAt: string | null;
 };
@@ -14,21 +14,24 @@ export type FeaturedPost = {
 const FEATURED_POST_COUNT = 3;
 
 /**
- * The three newest published articles. Ordering is publishedAt (the post's
+ * The three newest published featured articles. Ordering is publishedAt (the post's
  * birthday), not updatedAt, so a typo fix never reshuffles the home page.
  * A null publishedAt (legacy rows published before the stamp existed) sorts
  * last — NULLS LAST is explicit because Postgres defaults nulls first on DESC.
  */
 export async function getFeaturedPosts(): Promise<FeaturedPost[]> {
   const rows = await getPrisma().article.findMany({
-    where: { status: 'PUBLISHED' },
+    where: {
+      status: 'PUBLISHED',
+      featured: true,
+    },
     orderBy: [{ publishedAt: { sort: 'desc', nulls: 'last' } }, { createdAt: 'desc' }],
     take: FEATURED_POST_COUNT,
     select: {
       slug: true,
       title: true,
       excerpt: true,
-      body: true,
+      readTime: true,
       publishedAt: true,
     },
   });
@@ -37,7 +40,7 @@ export async function getFeaturedPosts(): Promise<FeaturedPost[]> {
     slug: row.slug,
     title: row.title,
     excerpt: row.excerpt,
-    body: row.body,
+    readTime: row.readTime,
     publishedAt: row.publishedAt?.toISOString() ?? null,
   }));
 }

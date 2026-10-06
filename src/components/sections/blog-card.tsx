@@ -18,8 +18,8 @@ type BlogCardProps = {
  */
 export function BlogCard({ post, index }: BlogCardProps) {
   const meta = post.publishedAt
-    ? `${formatArticleDate(post.publishedAt)} · ${formatReadTime(post.body)}`
-    : formatReadTime(post.body);
+    ? `${formatArticleDate(post.publishedAt)} · ${formatReadTime(post.readTime)}`
+    : formatReadTime(post.readTime);
 
   return (
     <article className="group relative flex items-center gap-4 py-5 transition-colors duration-200">

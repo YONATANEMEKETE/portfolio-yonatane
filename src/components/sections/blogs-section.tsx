@@ -5,7 +5,6 @@ import { ArrowRight } from 'lucide-react';
 import { getFeaturedPosts } from '@/lib/featured-posts';
 
 import { BlogCard } from '@/components/sections/blog-card';
-import { BlogsReveal } from '@/components/sections/blogs-reveal';
 
 /**
  * The `Blogs` id the nav link scrolls to. The home page only features the
@@ -64,9 +63,7 @@ async function FeaturedPosts() {
       <div aria-hidden className="h-px w-full bg-[#ececf0]" />
       {posts.map((post, position) => (
         <div key={post.slug}>
-          <BlogsReveal index={position}>
-            <BlogCard post={post} index={position + 1} />
-          </BlogsReveal>
+          <BlogCard post={post} index={position + 1} />
           <div aria-hidden className="h-px w-full bg-[#ececf0]" />
         </div>
       ))}

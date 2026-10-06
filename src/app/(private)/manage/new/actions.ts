@@ -51,6 +51,8 @@ export async function createArticle(input: unknown): Promise<CreateArticleResult
         excerpt: parsed.data.excerpt,
         category: parsed.data.category,
         cover: parsed.data.cover,
+        featured: parsed.data.featured,
+        readTime: parsed.data.readTime,
         body: parsed.data.body as Prisma.InputJsonValue,
         status,
         publishedAt: status === 'PUBLISHED' ? new Date() : null,

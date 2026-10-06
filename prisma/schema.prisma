@@ -44,6 +44,8 @@ model Article {
   cover       String // required — R2 object key
   category    Category @default(TECH)
   body        Json // Tiptap (ProseMirror) document — never stored HTML
+  featured    Boolean   @default(false)
+  readTime    Int       @default(6) // in minutes
   status      Status    @default(DRAFT)
   publishedAt DateTime? // set once, on first publish; a typo fix doesn't move a post's birthday
   createdAt   DateTime  @default(now())
@@ -51,6 +53,7 @@ model Article {
 
   // The public read path is always status = PUBLISHED ORDER BY publishedAt DESC.
   @@index([status, publishedAt])
+  @@index([featured, status, publishedAt])
 }
 
 // Yonatane's own addresses for passcode-reset links (auth.md). Plaintext, not

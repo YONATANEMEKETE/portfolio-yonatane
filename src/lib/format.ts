@@ -41,10 +41,13 @@ export function countBodyWords(body: unknown) {
 }
 
 /**
- * "9 min read" — 200 wpm, minimum 1 minute. The design always shows a meta
- * line, so even an empty body reads "1 min read" rather than nothing.
+ * "9 min read" — accepts either an explicit minute count or a Tiptap body
+ * (200 wpm, minimum 1 minute).
  */
-export function formatReadTime(body: unknown) {
-  const minutes = Math.max(1, Math.ceil(countBodyWords(body) / 200));
+export function formatReadTime(value: unknown) {
+  const minutes =
+    typeof value === 'number'
+      ? Math.max(1, Math.round(value))
+      : Math.max(1, Math.ceil(countBodyWords(value) / 200));
   return `${minutes} min read`;
 }

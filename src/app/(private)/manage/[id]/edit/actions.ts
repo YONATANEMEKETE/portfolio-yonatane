@@ -58,6 +58,8 @@ export async function updateArticle(id: string, input: unknown): Promise<UpdateA
         excerpt: parsed.data.excerpt,
         category: parsed.data.category,
         cover: parsed.data.cover,
+        featured: parsed.data.featured,
+        readTime: parsed.data.readTime,
         body: parsed.data.body as Prisma.InputJsonValue,
         // Status + publishedAt are owned by the publish/unpublish buttons, not
         // the edit form — saving text must never silently (un)publish or move

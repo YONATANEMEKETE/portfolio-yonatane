@@ -21,6 +21,8 @@ async function loadArticle(id: string) {
       category: true,
       status: true,
       cover: true,
+      featured: true,
+      readTime: true,
       body: true,
     },
   });
@@ -35,6 +37,8 @@ async function loadArticle(id: string) {
       excerpt: row.excerpt,
       category: row.category,
       cover: row.cover,
+      featured: row.featured,
+      readTime: row.readTime,
       body: row.body,
     }),
   ) as ArticleFormValues;

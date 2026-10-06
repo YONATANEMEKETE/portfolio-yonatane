@@ -1,9 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Pencil } from 'lucide-react';
+import { Pencil, Star } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { DeleteArticleButton } from '@/components/manage/delete-article-button';
+import { FeaturedToggleButton } from '@/components/manage/featured-toggle-button';
 import { PublishToggleButton } from '@/components/manage/publish-toggle-button';
 
 /** Plain row the manage page hands down — ISO dates keep it serializable. */
@@ -14,6 +15,8 @@ export type ManageArticle = {
   excerpt: string;
   category: 'TECH' | 'PERSONAL';
   status: 'DRAFT' | 'PUBLISHED';
+  featured: boolean;
+  readTime: number;
   coverUrl: string;
   publishedAt: string | null;
   updatedAt: string;
@@ -44,6 +47,12 @@ export function ArticleCard({ article }: { article: ManageArticle }) {
   return (
     <article className="border-line-soft group relative flex gap-4 rounded-[16px] border bg-white p-3 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)]">
       <div className="absolute top-2 right-2 flex items-center gap-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100">
+        <FeaturedToggleButton
+          id={article.id}
+          title={article.title}
+          featured={article.featured}
+          className={iconButton}
+        />
         <Link
           href={`/manage/${article.id}/edit`}
           title="Edit article"
@@ -85,9 +94,16 @@ export function ArticleCard({ article }: { article: ManageArticle }) {
             />
             {published ? 'Published' : 'Draft'}
           </span>
+          {article.featured && (
+            <span className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 font-mono text-[11px] text-amber-600">
+              <Star aria-hidden className="size-3 fill-current" />
+              Featured
+            </span>
+          )}
           <span className="text-muted-ink rounded-full bg-[#f0f0f3] px-2 py-0.5 font-mono text-[11px]">
             {article.category === 'TECH' ? 'Tech' : 'Personal'}
           </span>
+          <span className="text-muted-ink font-mono text-[11px]">{article.readTime} min read</span>
           {dateLabel && <span className="text-muted-ink font-mono text-[11px]">{dateLabel}</span>}
         </div>
 

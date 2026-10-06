@@ -17,9 +17,15 @@ const STATUS_OPTIONS = [
   { value: 'DRAFT', label: 'Draft' },
 ] as const;
 
+const FEATURED_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'true', label: 'Featured' },
+  { value: 'false', label: 'Not featured' },
+] as const;
+
 /**
- * Search + category + status filters for the /manage blogs list. URL-driven
- * (?q=&category=&status=) so a filtered view is bookmarkable and shareable —
+ * Search + category + status + featured filters for the /manage blogs list. URL-driven
+ * (?q=&category=&status=&featured=) so a filtered view is bookmarkable and shareable —
  * same instinct as the route-based ManageTabs. Typing debounces into the URL;
  * chips navigate immediately.
  */
@@ -27,10 +33,12 @@ export function ArticleFilters({
   initialQuery,
   initialCategory,
   initialStatus,
+  initialFeatured,
 }: {
   initialQuery: string;
   initialCategory: string;
   initialStatus: string;
+  initialFeatured: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -39,11 +47,12 @@ export function ArticleFilters({
   const [query, setQuery] = useState(initialQuery);
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
-  function navigate(next: { q?: string; category?: string; status?: string }) {
+  function navigate(next: { q?: string; category?: string; status?: string; featured?: string }) {
     const params = new URLSearchParams(searchParams.toString());
     const q = next.q ?? query;
     const category = next.category ?? initialCategory;
     const status = next.status ?? initialStatus;
+    const featured = next.featured ?? initialFeatured;
 
     if (q.trim()) {
       params.set('q', q.trim());
@@ -59,6 +68,11 @@ export function ArticleFilters({
       params.set('status', status);
     } else {
       params.delete('status');
+    }
+    if (featured && featured !== 'all') {
+      params.set('featured', featured);
+    } else {
+      params.delete('featured');
     }
 
     const url = params.size > 0 ? `${pathname}?${params.toString()}` : pathname;
@@ -127,6 +141,22 @@ export function ArticleFilters({
               onClick={() => navigate({ status: option.value })}
               aria-pressed={initialStatus === option.value}
               className={chipClass(initialStatus === option.value)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
+        <span aria-hidden className="bg-line-soft h-4 w-px" />
+
+        <div role="group" aria-label="Filter by featured" className="flex items-center gap-1.5">
+          {FEATURED_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => navigate({ featured: option.value })}
+              aria-pressed={initialFeatured === option.value}
+              className={chipClass(initialFeatured === option.value)}
             >
               {option.label}
             </button>

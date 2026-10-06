@@ -25,6 +25,8 @@ const validInput = {
   excerpt: 'A short excerpt.',
   category: 'TECH',
   cover: 'articles/covers/abc123.jpg',
+  featured: false,
+  readTime: 6,
   body: validBody,
 };
 

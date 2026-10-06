@@ -17,12 +17,14 @@ type ArticleFilter = {
   query: string;
   category: 'all' | 'TECH' | 'PERSONAL';
   status: 'all' | 'PUBLISHED' | 'DRAFT';
+  featured: 'all' | 'true' | 'false';
 };
 
 function parseFilters(searchParams: {
   q?: string | string[];
   category?: string | string[];
   status?: string | string[];
+  featured?: string | string[];
 }): ArticleFilter {
   const query = typeof searchParams.q === 'string' ? searchParams.q.trim().slice(0, 100) : '';
   const category =
@@ -33,8 +35,12 @@ function parseFilters(searchParams: {
     searchParams.status === 'PUBLISHED' || searchParams.status === 'DRAFT'
       ? searchParams.status
       : 'all';
+  const featured =
+    searchParams.featured === 'true' || searchParams.featured === 'false'
+      ? searchParams.featured
+      : 'all';
 
-  return { query, category, status };
+  return { query, category, status, featured };
 }
 
 async function loadArticles(filter: ArticleFilter): Promise<ManageArticle[]> {
@@ -42,6 +48,7 @@ async function loadArticles(filter: ArticleFilter): Promise<ManageArticle[]> {
   const where: Prisma.ArticleWhereInput = {
     ...(filter.category !== 'all' ? { category: filter.category } : {}),
     ...(filter.status !== 'all' ? { status: filter.status } : {}),
+    ...(filter.featured !== 'all' ? { featured: filter.featured === 'true' } : {}),
     ...(filter.query
       ? {
           OR: [
@@ -64,6 +71,8 @@ async function loadArticles(filter: ArticleFilter): Promise<ManageArticle[]> {
         excerpt: true,
         category: true,
         status: true,
+        featured: true,
+        readTime: true,
         cover: true,
         publishedAt: true,
         updatedAt: true,
@@ -83,6 +92,8 @@ async function loadArticles(filter: ArticleFilter): Promise<ManageArticle[]> {
     excerpt: row.excerpt,
     category: row.category,
     status: row.status,
+    featured: row.featured,
+    readTime: row.readTime,
     // Render-time prefix: a bucket/CDN move needs no data migration.
     coverUrl: coverPublicUrl(row.cover),
     publishedAt: row.publishedAt?.toISOString() ?? null,
@@ -97,7 +108,11 @@ async function loadArticles(filter: ArticleFilter): Promise<ManageArticle[]> {
  */
 async function ArticleList({ filter }: { filter: ArticleFilter }) {
   const articles = await loadArticles(filter);
-  const filtering = filter.query !== '' || filter.category !== 'all' || filter.status !== 'all';
+  const filtering =
+    filter.query !== '' ||
+    filter.category !== 'all' ||
+    filter.status !== 'all' ||
+    filter.featured !== 'all';
 
   // Empty has two voices: filtered-but-no-match (keep filtering hint + clear
   // link back to the unfiltered list) vs. genuinely no articles yet.
@@ -145,6 +160,7 @@ export default async function ManagePage({
     q?: string | string[];
     category?: string | string[];
     status?: string | string[];
+    featured?: string | string[];
   }>;
 }) {
   const filter = parseFilters(await searchParams);
@@ -170,6 +186,7 @@ export default async function ManagePage({
           initialQuery={filter.query}
           initialCategory={filter.category}
           initialStatus={filter.status}
+          initialFeatured={filter.featured}
         />
       </Suspense>
 
@@ -177,7 +194,7 @@ export default async function ManagePage({
           re-suspends with a key so the old rows don't linger stale. A throw
           inside ArticleList lands in error.tsx, not a blank page. */}
       <Suspense
-        key={`${filter.query}|${filter.category}|${filter.status}`}
+        key={`${filter.query}|${filter.category}|${filter.status}|${filter.featured}`}
         fallback={<ArticleListSkeleton />}
       >
         <ArticleList filter={filter} />

@@ -166,6 +166,12 @@ export const articleSchema = z.object({
     .max(160, 'At most 160 characters — it doubles as the meta description.'),
   category: z.enum(ARTICLE_CATEGORIES),
   cover: coverKeySchema,
+  featured: z.boolean(),
+  readTime: z
+    .number()
+    .int('Read time must be a whole number of minutes.')
+    .min(1, 'Read time must be at least 1 minute.')
+    .max(180, 'Read time must be at most 180 minutes.'),
   body: articleBodySchema,
 });
 

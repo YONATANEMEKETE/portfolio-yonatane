@@ -5,6 +5,7 @@ import type { JSONContent } from '@tiptap/core';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Star } from 'lucide-react';
 import type { z } from 'zod';
 
 import { articleSchema } from '@/lib/validation';
@@ -92,6 +93,8 @@ export function ArticleForm({
       excerpt: '',
       category: 'TECH',
       cover: '',
+      featured: false,
+      readTime: 6,
       body: EMPTY_BODY,
     },
   });
@@ -272,6 +275,68 @@ export function ArticleForm({
             </fieldset>
           )}
         />
+      </div>
+
+      {/* Read time + Featured */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="article-readtime" className="text-muted-ink font-mono text-[13px]">
+            Read time
+          </label>
+          <div
+            className={cn(
+              'border-line-soft focus-within:border-brand flex items-center rounded-full border bg-white transition-colors',
+              errors.readTime && 'border-destructive',
+            )}
+          >
+            <input
+              id="article-readtime"
+              type="number"
+              min={1}
+              max={180}
+              placeholder="6"
+              aria-invalid={errors.readTime ? true : undefined}
+              className="placeholder:text-faint w-full rounded-full bg-transparent px-4 py-2 font-mono text-[13px] focus:outline-none"
+              {...register('readTime', { valueAsNumber: true })}
+            />
+            <span className="text-faint pr-4 font-mono text-[13px]">min</span>
+          </div>
+          <p role="alert" className="text-destructive font-mono text-[12px]">
+            {errors.readTime?.message}
+          </p>
+        </div>
+
+        <div className="flex flex-col justify-start gap-1.5">
+          <span className="text-muted-ink font-mono text-[13px]">Visibility</span>
+          <Controller
+            control={control}
+            name="featured"
+            render={({ field }) => (
+              <label
+                htmlFor="article-featured"
+                className="border-line-soft hover:bg-tile-start flex cursor-pointer items-center justify-between gap-3 rounded-full border bg-white px-4 py-2 transition-colors select-none"
+              >
+                <div className="flex items-center gap-2">
+                  <Star
+                    aria-hidden
+                    className={cn(
+                      'size-4 transition-colors',
+                      field.value ? 'fill-amber-500 text-amber-500' : 'text-faint',
+                    )}
+                  />
+                  <span className="text-ink font-mono text-[13px]">Feature on home page</span>
+                </div>
+                <input
+                  id="article-featured"
+                  type="checkbox"
+                  checked={field.value}
+                  onChange={(event) => field.onChange(event.target.checked)}
+                  className="size-4 cursor-pointer accent-[#111111]"
+                />
+              </label>
+            )}
+          />
+        </div>
       </div>
 
       {/* Cover — the field holds the R2 object key; the uploader owns the

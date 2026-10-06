@@ -64,4 +64,10 @@ describe('formatReadTime', () => {
     expect(formatReadTime(doc(201))).toBe('2 min read');
     expect(formatReadTime(doc(1800))).toBe('9 min read');
   });
+
+  it('formats explicit numbers with a one-minute floor', () => {
+    expect(formatReadTime(0)).toBe('1 min read');
+    expect(formatReadTime(6)).toBe('6 min read');
+    expect(formatReadTime(15)).toBe('15 min read');
+  });
 });
