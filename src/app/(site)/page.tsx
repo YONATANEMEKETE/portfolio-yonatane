@@ -7,6 +7,7 @@ import { ProjectsSection } from '@/components/sections/projects-section';
 import { TechStackSection } from '@/components/sections/tech-stack-section';
 import { ProfileCard } from '@/components/sections/profile-card';
 import { SocialLinks } from '@/components/sections/social-links';
+import { QuoteSection } from '@/components/sections/quote-section';
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
         <TechStackSection />
         <ProjectsSection />
         <BlogsSection />
+        <QuoteSection />
       </Container>
     </main>
   );

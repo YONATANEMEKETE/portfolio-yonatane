@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 
-import type { FeaturedPost } from '@/lib/featured-posts';
 import { formatArticleDate, formatReadTime } from '@/lib/format';
 
 export type BlogCardPost = {
