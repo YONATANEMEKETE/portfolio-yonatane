@@ -8,11 +8,12 @@ import { TechStackSection } from '@/components/sections/tech-stack-section';
 import { ProfileCard } from '@/components/sections/profile-card';
 import { SocialLinks } from '@/components/sections/social-links';
 import { QuoteSection } from '@/components/sections/quote-section';
+import { FooterSection } from '@/components/sections/footer-section';
 
 export default function Home() {
   return (
     <main>
-      <Container className="pt-5 pb-16">
+      <Container className="pt-5">
         <ProfileCard />
         {/* Design: 8px below the card, the social row sits flush to the right. */}
         <SocialLinks className="mt-2" />
@@ -23,6 +24,7 @@ export default function Home() {
         <ProjectsSection />
         <BlogsSection />
         <QuoteSection />
+        <FooterSection />
       </Container>
     </main>
   );
