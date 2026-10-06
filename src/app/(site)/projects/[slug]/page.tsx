@@ -33,10 +33,46 @@ export async function generateMetadata(props: PageProps<'/projects/[slug]'>): Pr
     return {};
   }
 
+  const cleanTagline = project.tagline.replace(/\*\*/g, '');
+  const cleanDescription = project.description.replace(/\*\*/g, '');
+  const description = `${cleanTagline}. ${cleanDescription}`;
+
   return {
-    title: project.name,
-    // The card copy marks emphasis with `**`, which has no place in a meta tag.
-    description: project.tagline.replace(/\*\*/g, ''),
+    title: `${project.name} — Case Study`,
+    description,
+    keywords: [
+      project.name,
+      ...project.stack.map((item) => item.name),
+      'Case Study',
+      'Portfolio Project',
+      'Fullstack TypeScript',
+      'Software Architecture',
+      'Yonatane Mekete',
+    ],
+    alternates: {
+      canonical: `/projects/${project.slug}`,
+    },
+    openGraph: {
+      type: 'article',
+      title: `${project.name} — Case Study`,
+      description,
+      url: `/projects/${project.slug}`,
+      images: [
+        {
+          url: project.cover,
+          width: 1200,
+          height: 630,
+          alt: `${project.name} preview cover`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${project.name} — Case Study`,
+      description,
+      images: [project.cover],
+      creator: '@Yonatanem2',
+    },
   };
 }
 
@@ -48,10 +84,31 @@ export default async function ProjectDetailsPage(props: PageProps<'/projects/[sl
     notFound();
   }
 
-  const { name, status, tagline, description, cover, details } = project;
+  const { name, status, tagline, description, cover, details, links } = project;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name,
+    description: project.description.replace(/\*\*/g, ''),
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Web',
+    image: cover,
+    author: {
+      '@type': 'Person',
+      name: 'Yonatane Mekete',
+      url: 'https://x.com/Yonatanem2',
+    },
+    ...(links.live ? { url: links.live } : {}),
+    ...(links.repo ? { codeRepository: links.repo } : {}),
+  };
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Container className="pt-8 pb-16">
         <div className="flex items-center justify-between gap-4">
           <nav aria-label="Breadcrumb">

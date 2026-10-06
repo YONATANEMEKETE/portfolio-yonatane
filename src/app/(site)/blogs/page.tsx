@@ -14,7 +14,33 @@ import { TextReveal } from '@/components/forgeui/text-reveal';
 
 export const metadata: Metadata = {
   title: 'Blogs',
-  description: 'A little tech, a little heart, and things I probably shouldn’t say out loud.',
+  description:
+    'Essays and technical notes on fullstack TypeScript, software architecture, web development, and personal reflections by Yonatane Mekete.',
+  keywords: [
+    'Tech Blog',
+    'Software Engineering',
+    'TypeScript',
+    'Architecture',
+    'Web Development',
+    'Yonatane Mekete',
+  ],
+  alternates: {
+    canonical: '/blogs',
+  },
+  openGraph: {
+    type: 'website',
+    title: 'Blogs | Yonatane Mekete',
+    description:
+      'Essays and technical notes on fullstack TypeScript, software architecture, and web systems.',
+    url: '/blogs',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blogs | Yonatane Mekete',
+    description:
+      'Essays and technical notes on fullstack TypeScript, software architecture, and web systems.',
+    creator: '@Yonatanem2',
+  },
 };
 
 type CategoryFilter = 'all' | 'TECH' | 'PERSONAL';

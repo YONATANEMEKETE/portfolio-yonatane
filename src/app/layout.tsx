@@ -13,12 +13,72 @@ const jetbrainsMono = JetBrains_Mono({
 });
 const caveat = Caveat({ subsets: ['latin'], variable: '--font-hand' });
 
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yonatanemekete.com';
+const siteUrl =
+  rawSiteUrl.startsWith('http://') || rawSiteUrl.startsWith('https://')
+    ? rawSiteUrl
+    : rawSiteUrl.includes('localhost')
+      ? `http://${rawSiteUrl}`
+      : `https://${rawSiteUrl}`;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: 'Yonatan Mekete — Portfolio',
-    template: '%s | Yonatan Mekete',
+    default: 'Yonatane Mekete — Fullstack Software Engineer',
+    template: '%s | Yonatane Mekete',
   },
-  description: 'Personal portfolio and engineering blog of Yonatane Mekete.',
+  description:
+    'Personal portfolio and engineering writings of Yonatane Mekete. Fullstack TypeScript developer shipping fast, resilient web applications and interactive systems.',
+  applicationName: 'Yonatane Mekete Portfolio',
+  authors: [{ name: 'Yonatane Mekete', url: 'https://x.com/Yonatanem2' }],
+  creator: 'Yonatane Mekete',
+  publisher: 'Yonatane Mekete',
+  keywords: [
+    'Yonatane Mekete',
+    'Yonatan Mekete',
+    'Fullstack Developer',
+    'Software Engineer',
+    'TypeScript',
+    'Next.js',
+    'React',
+    'Node.js',
+    'Web Development',
+    'Portfolio',
+    'Addis Ababa',
+  ],
+  alternates: {
+    canonical: '/',
+    types: {
+      'text/markdown': [{ url: '/llms.txt', title: 'LLM Context' }],
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: '/',
+    siteName: 'Yonatane Mekete Portfolio',
+    title: 'Yonatane Mekete — Fullstack Software Engineer',
+    description:
+      'Personal portfolio and engineering writings of Yonatane Mekete. Fullstack TypeScript developer shipping fast, resilient web applications.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Yonatane Mekete — Fullstack Software Engineer',
+    description:
+      'Personal portfolio and engineering writings of Yonatane Mekete. Fullstack TypeScript developer shipping fast, resilient web applications.',
+    creator: '@Yonatanem2',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },

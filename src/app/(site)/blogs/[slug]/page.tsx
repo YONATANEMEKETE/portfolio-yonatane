@@ -23,10 +23,44 @@ export async function generateMetadata(props: PageProps<'/blogs/[slug]'>): Promi
   return {
     title: article.title,
     description: article.excerpt,
+    keywords: [
+      article.title,
+      article.category === 'TECH' ? 'Technology' : 'Personal',
+      'Engineering Blog',
+      'Software Architecture',
+      'TypeScript',
+      'Web Development',
+      'Yonatane Mekete',
+    ],
+    authors: [{ name: 'Yonatane Mekete', url: 'https://x.com/Yonatanem2' }],
+    alternates: {
+      canonical: `/blogs/${article.slug}`,
+    },
     openGraph: {
+      type: 'article',
       title: article.title,
       description: article.excerpt,
-      images: [{ url: article.coverUrl }],
+      url: `/blogs/${article.slug}`,
+      publishedTime: article.publishedAt ?? undefined,
+      authors: ['Yonatane Mekete'],
+      section: article.category === 'TECH' ? 'Technology' : 'Personal',
+      images: article.coverUrl
+        ? [
+            {
+              url: article.coverUrl,
+              width: 1200,
+              height: 630,
+              alt: `${article.title} cover image`,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt,
+      images: article.coverUrl ? [article.coverUrl] : undefined,
+      creator: '@Yonatanem2',
     },
   };
 }
@@ -41,8 +75,31 @@ export default async function BlogDetailsPage(props: PageProps<'/blogs/[slug]'>)
   const timeStr = formatReadTime(article.readTime);
   const meta = [categoryLabel, dateStr, timeStr].filter(Boolean).join(' · ');
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: article.title,
+    description: article.excerpt,
+    image: article.coverUrl ? [article.coverUrl] : undefined,
+    datePublished: article.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: 'Yonatane Mekete',
+      url: 'https://x.com/Yonatanem2',
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Yonatane Mekete',
+    },
+    articleSection: article.category === 'TECH' ? 'Technology' : 'Personal',
+  };
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Container className="pt-8 pb-16">
         <div className="flex items-center justify-between gap-4">
           <nav aria-label="Breadcrumb">
