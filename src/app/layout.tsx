@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Caveat, Inter, JetBrains_Mono } from 'next/font/google';
+import Noise from '@/components/Noise';
 import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -24,7 +25,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       lang="en"
       className={cn('font-sans', inter.variable, jetbrainsMono.variable, caveat.variable)}
     >
-      <body>{children}</body>
+      <body>
+        <Noise />
+        {children}
+      </body>
     </html>
   );
 }

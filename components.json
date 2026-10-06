@@ -24,6 +24,7 @@
   "registries": {
     "@forgeui": "https://forgeui.in/r/{name}.json",
     "@magicui": "https://magicui.design/r/{name}",
-    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json"
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json",
+    "@react-bits": "https://reactbits.dev/r/{name}.json"
   }
 }
