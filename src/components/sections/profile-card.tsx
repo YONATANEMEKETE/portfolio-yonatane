@@ -1,8 +1,14 @@
+'use client';
+
 import Image from 'next/image';
 import { Eye, MapPin } from 'lucide-react';
+import { motion } from 'motion/react';
 
 import { PronounceName } from '@/components/sections/pronounce-name';
 import { ViewCounter } from '@/components/sections/view-counter';
+import { TextMorph } from '@/components/forgeui/text-morph';
+import { GooeyText } from '@/components/ui/gooey-text';
+import { TextReveal } from '@/components/forgeui/text-reveal';
 
 // Copy lives here until the content is wired to real data.
 const profile = {
@@ -10,7 +16,8 @@ const profile = {
   avatar: '/profile-image.png',
   // Respelling the pronunciation clip was generated from.
   phonetic: 'yo-na-TA-neh',
-  subtitle: '23 | FULLSTACK TYPESCRIPT DEVELOPER',
+  age: '23',
+  roles: ['FULLSTACK TYPESCRIPT DEVELOPER', 'FULLSTACK SOFTWARE ENGINEER'],
   location: { country: 'ETHIOPIA', city: 'ADDIS ABABA' },
 };
 
@@ -34,7 +41,15 @@ export function ProfileCard() {
         strokeLinejoin="round"
         className="text-muted-ink pointer-events-none absolute top-[5px] -left-[135px] hidden h-20 w-[150px] xl:block"
       >
-        <path d={avatarArrow} />
+        <motion.path
+          d={avatarArrow}
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{
+            pathLength: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] },
+            opacity: { duration: 0.2, delay: 0.2 },
+          }}
+        />
       </svg>
       <div className="group flex size-[136px] shrink-0 items-center justify-center rounded-[20px] border border-[#d8d8dc] bg-white/70 p-1 shadow-[0_2px_8px_rgba(0,0,0,0.08)] backdrop-blur-[12px] transition-colors hover:bg-white/90">
         <Image
@@ -52,7 +67,10 @@ export function ProfileCard() {
         <div className="flex w-full flex-col gap-1.5">
           <div className="flex w-full items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <p className="text-ink text-[26px] leading-[34px]">{profile.name}</p>
+              <GooeyText
+                text={profile.name}
+                className="text-ink text-[26px] leading-[34px] font-bold"
+              />
               <Image src="/verified-badge.png" alt="Verified" width={20} height={20} />
               <PronounceName name={profile.name} phonetic={profile.phonetic} />
             </div>
@@ -63,14 +81,18 @@ export function ProfileCard() {
             </p>
           </div>
 
-          <p className="text-muted-ink text-[15px] leading-5">{profile.subtitle}</p>
+          <TextMorph
+            prefix={`${profile.age} |`}
+            words={profile.roles}
+            className="text-muted-ink text-[15px] leading-5"
+          />
         </div>
 
         <p className="text-muted-ink flex items-center gap-1.5 text-[14px] leading-[18px]">
-          <MapPin aria-hidden className="size-3.5" />
-          {profile.location.country}
+          <MapPin aria-hidden className="size-3.5 shrink-0" />
+          <TextReveal text={profile.location.country} duration={0.4} />
           <span aria-hidden className="size-[3px] rounded-full bg-current" />
-          {profile.location.city}
+          <TextReveal text={profile.location.city} duration={0.4} delay={0.25} />
         </p>
       </div>
     </div>

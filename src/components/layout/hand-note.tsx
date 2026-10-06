@@ -1,3 +1,6 @@
+'use client';
+
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 // Hand-drawn arrow from the design: tail at the top right, tip dipping down-left
@@ -28,7 +31,14 @@ export function HandNote({ label, className }: HandNoteProps) {
         className,
       )}
     >
-      <span className="font-hand text-[20px] leading-[25px]">{label}</span>
+      <motion.span
+        className="font-hand text-[20px] leading-[25px]"
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {label}
+      </motion.span>
       <svg
         viewBox="0 0 150 80"
         fill="none"
@@ -38,7 +48,15 @@ export function HandNote({ label, className }: HandNoteProps) {
         strokeLinejoin="round"
         className="h-20 w-[150px]"
       >
-        <path d={arrow} />
+        <motion.path
+          d={arrow}
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{
+            pathLength: { duration: 1.2, delay: 0.35, ease: [0.16, 1, 0.3, 1] },
+            opacity: { duration: 0.2, delay: 0.35 },
+          }}
+        />
       </svg>
     </div>
   );
