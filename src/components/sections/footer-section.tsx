@@ -3,6 +3,8 @@
  * Follows the Pencil frame: 1px separator, byline, copyright notice, and live location indicator.
  */
 export function FooterSection() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="w-full">
       <div aria-hidden className="h-px w-full bg-[#e5e5e8]" />
@@ -14,7 +16,7 @@ export function FooterSection() {
         </p>
 
         <p className="text-faint font-mono text-[13px] leading-snug">
-          &copy; 2026 All rights reserved.
+          &copy; {currentYear} All rights reserved.
         </p>
 
         <p className="flex items-center gap-1.5 font-mono text-[13px] leading-snug">
