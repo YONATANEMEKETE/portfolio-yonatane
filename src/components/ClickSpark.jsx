@@ -10,7 +10,7 @@ const ClickSpark = ({
   duration = 400,
   easing = 'ease-out',
   extraScale = 1.0,
-  children
+  children,
 }) => {
   const canvasRef = useRef(null);
   const sparksRef = useRef([]);
@@ -46,7 +46,7 @@ const ClickSpark = ({
   }, []);
 
   const easeFunc = useCallback(
-    t => {
+    (t) => {
       switch (easing) {
         case 'linear':
           return t;
@@ -58,7 +58,7 @@ const ClickSpark = ({
           return t * (2 - t);
       }
     },
-    [easing]
+    [easing],
   );
 
   useEffect(() => {
@@ -68,13 +68,13 @@ const ClickSpark = ({
 
     let animationId;
 
-    const draw = timestamp => {
+    const draw = (timestamp) => {
       if (!startTimeRef.current) {
         startTimeRef.current = timestamp;
       }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      sparksRef.current = sparksRef.current.filter(spark => {
+      sparksRef.current = sparksRef.current.filter((spark) => {
         const elapsed = timestamp - spark.startTime;
         if (elapsed >= duration) {
           return false;
@@ -111,7 +111,7 @@ const ClickSpark = ({
     };
   }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale]);
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const x = e.clientX;
@@ -122,7 +122,7 @@ const ClickSpark = ({
       x,
       y,
       angle: (2 * Math.PI * i) / sparkCount,
-      startTime: now
+      startTime: now,
     }));
 
     sparksRef.current.push(...newSparks);
@@ -133,7 +133,7 @@ const ClickSpark = ({
       style={{
         position: 'relative',
         width: '100%',
-        minHeight: '100%'
+        minHeight: '100%',
       }}
       onClickCapture={handleClick}
     >
@@ -148,7 +148,7 @@ const ClickSpark = ({
           top: 0,
           left: 0,
           pointerEvents: 'none',
-          zIndex: 9999
+          zIndex: 9999,
         }}
       />
       {children}

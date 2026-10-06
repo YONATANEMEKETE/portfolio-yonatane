@@ -109,11 +109,11 @@
     "vitest": "^5.0.1"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
+    "*.{ts,tsx,js,jsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{js,mjs,cjs,json,css,md,yml,yaml}": [
+    "*.{mjs,cjs,json,css,md,yml,yaml}": [
       "prettier --write"
     ]
   }

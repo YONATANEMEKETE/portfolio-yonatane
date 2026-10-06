@@ -4,9 +4,9 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import './LineSidebar.css';
 
 const FALLOFF_CURVES = {
-  linear: p => p,
-  smooth: p => p * p * (3 - 2 * p),
-  sharp: p => p * p * p
+  linear: (p) => p,
+  smooth: (p) => p * p * (3 - 2 * p),
+  sharp: (p) => p * p * p,
 };
 
 const DEFAULT_ITEMS = [
@@ -21,7 +21,7 @@ const DEFAULT_ITEMS = [
   'Community',
   'Resources',
   'Documentation',
-  'Support'
+  'Support',
 ];
 
 const LineSidebar = ({
@@ -44,7 +44,7 @@ const LineSidebar = ({
   defaultActive = null,
   activeIndex: controlledActive,
   onItemClick,
-  className = ''
+  className = '',
 }) => {
   const listRef = useRef(null);
   const itemRefs = useRef([]);
@@ -65,7 +65,7 @@ const LineSidebar = ({
   }, [activeIndex, smoothing]);
 
   useEffect(() => {
-    runFrameRef.current = now => {
+    runFrameRef.current = (now) => {
       const dt = Math.min((now - lastRef.current) / 1000, 0.05);
       lastRef.current = now;
       const tau = Math.max(smoothingRef.current, 1) / 1000;
@@ -102,7 +102,7 @@ const LineSidebar = ({
   }, []);
 
   const handlePointerMove = useCallback(
-    e => {
+    (e) => {
       const list = listRef.current;
       if (!list) return;
       const rect = list.getBoundingClientRect();
@@ -118,7 +118,7 @@ const LineSidebar = ({
       }
       startLoop();
     },
-    [falloff, proximityRadius, startLoop]
+    [falloff, proximityRadius, startLoop],
   );
 
   const handlePointerLeave = useCallback(() => {
@@ -131,7 +131,7 @@ const LineSidebar = ({
       setInternalActive(index);
       onItemClick?.(index, label);
     },
-    [onItemClick]
+    [onItemClick],
   );
 
   useEffect(() => {
@@ -143,7 +143,7 @@ const LineSidebar = ({
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     },
-    []
+    [],
   );
 
   return (
@@ -159,14 +159,19 @@ const LineSidebar = ({
         '--max-shift': `${maxShift}px`,
         '--item-gap': `${itemGap}px`,
         '--font-size': `${fontSize}rem`,
-        '--smoothing': `${smoothing}ms`
+        '--smoothing': `${smoothing}ms`,
       }}
     >
-      <ul ref={listRef} className="line-sidebar__list" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
+      <ul
+        ref={listRef}
+        className="line-sidebar__list"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+      >
         {items.map((label, index) => (
           <li
             key={`${label}-${index}`}
-            ref={el => {
+            ref={(el) => {
               itemRefs.current[index] = el;
             }}
             className="line-sidebar__item"
@@ -175,7 +180,9 @@ const LineSidebar = ({
           >
             {showMarker && <span className="line-sidebar__marker" aria-hidden="true" />}
             <span className="line-sidebar__label">
-              {showIndex && <span className="line-sidebar__index">{String(index + 1).padStart(2, '0')}</span>}
+              {showIndex && (
+                <span className="line-sidebar__index">{String(index + 1).padStart(2, '0')}</span>
+              )}
               <span className="line-sidebar__text">{label}</span>
             </span>
           </li>
