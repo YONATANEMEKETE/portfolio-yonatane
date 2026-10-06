@@ -28,7 +28,7 @@ const avatarArrow =
 
 export function ProfileCard() {
   return (
-    <div className="border-line-soft relative flex items-center gap-5 rounded-[16px] border bg-white p-5">
+    <div className="border-line-soft relative flex flex-col items-start gap-4 rounded-[16px] border bg-white p-4 sm:flex-row sm:items-center sm:gap-5 sm:p-5">
       {/* Hidden below xl: it sits in the gutter beside the column, which only
           exists once the viewport is wide enough to hold it. */}
       <svg
@@ -51,31 +51,46 @@ export function ProfileCard() {
           }}
         />
       </svg>
-      <div className="group flex size-[136px] shrink-0 items-center justify-center rounded-[20px] border border-[#d8d8dc] bg-white/70 p-1 shadow-[0_2px_8px_rgba(0,0,0,0.08)] backdrop-blur-[12px] transition-colors hover:bg-white/90">
-        <Image
-          src={profile.avatar}
-          alt=""
-          width={128}
-          height={128}
-          preload
-          className="border-ghost size-32 shrink-0 rounded-[16px] border bg-[#ececf0] object-cover transition-colors group-hover:bg-[#f5f5f7]"
-        />
+      <div className="flex w-full items-start justify-between sm:w-auto">
+        <div className="group flex size-20 shrink-0 items-center justify-center rounded-[18px] border border-[#d8d8dc] bg-white/70 p-1 shadow-[0_2px_8px_rgba(0,0,0,0.08)] backdrop-blur-[12px] transition-colors hover:bg-white/90 sm:size-[136px] sm:rounded-[20px]">
+          <Image
+            src={profile.avatar}
+            alt=""
+            width={128}
+            height={128}
+            preload
+            className="border-ghost size-[72px] shrink-0 rounded-[14px] border bg-[#ececf0] object-cover transition-colors group-hover:bg-[#f5f5f7] sm:size-32 sm:rounded-[16px]"
+          />
+        </div>
+
+        {/* View counter shown on mobile header row */}
+        <p className="text-muted-ink flex items-center gap-1.5 self-start pt-1 font-mono text-[13px] sm:hidden">
+          <Eye aria-hidden className="text-faint size-3.5" />
+          <ViewCounter />
+        </p>
       </div>
 
-      {/* Height of the photo itself (128px), so the column lines up with the image box. */}
-      <div className="flex h-32 w-full flex-col justify-between gap-1.5 py-2 font-mono">
+      {/* Height of the photo itself (128px) on sm+, responsive on smaller screens. */}
+      <div className="flex h-auto w-full flex-col justify-between gap-2 font-mono sm:h-32 sm:gap-1.5 sm:py-2">
         <div className="flex w-full flex-col gap-1.5">
           <div className="flex w-full items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <GooeyText
                 text={profile.name}
-                className="text-ink text-[26px] leading-[34px] font-bold"
+                className="text-ink text-[22px] leading-[30px] font-bold sm:text-[26px] sm:leading-[34px]"
               />
-              <Image src="/verified-badge.png" alt="Verified" width={20} height={20} />
+              <Image
+                src="/verified-badge.png"
+                alt="Verified"
+                width={20}
+                height={20}
+                className="size-[18px] shrink-0 sm:size-5"
+              />
               <PronounceName name={profile.name} phonetic={profile.phonetic} />
             </div>
 
-            <p className="text-muted-ink flex items-center gap-1.5 self-start text-[14px]">
+            {/* View counter shown on desktop */}
+            <p className="text-muted-ink hidden items-center gap-1.5 self-start text-[14px] sm:flex">
               <Eye aria-hidden className="text-faint size-4" />
               <ViewCounter />
             </p>
@@ -84,11 +99,11 @@ export function ProfileCard() {
           <TextMorph
             prefix={`${profile.age} |`}
             words={profile.roles}
-            className="text-muted-ink text-[15px] leading-5"
+            className="text-muted-ink text-[13px] leading-5 sm:text-[15px]"
           />
         </div>
 
-        <p className="text-muted-ink flex items-center gap-1.5 text-[14px] leading-[18px]">
+        <p className="text-muted-ink flex flex-wrap items-center gap-1.5 text-[13px] leading-[18px] sm:text-[14px]">
           <MapPin aria-hidden className="size-3.5 shrink-0" />
           <TextReveal text={profile.location.country} duration={0.4} />
           <span aria-hidden className="size-[3px] rounded-full bg-current" />

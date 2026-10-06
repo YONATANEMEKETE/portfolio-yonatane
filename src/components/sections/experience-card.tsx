@@ -36,7 +36,7 @@ export function ExperienceCard({ experience, open, onToggle }: ExperienceCardPro
           aria-expanded={open}
           aria-controls={bodyId}
           onClick={handleToggle}
-          className="focus-visible:ring-ink/30 flex w-full items-center gap-3 px-5 py-5 text-left transition-colors hover:bg-[#fcfcfe] focus-visible:ring-2 focus-visible:outline-none"
+          className="focus-visible:ring-ink/30 flex w-full items-center gap-3 px-4 py-4 text-left transition-colors hover:bg-[#fcfcfe] focus-visible:ring-2 focus-visible:outline-none sm:px-5 sm:py-5"
         >
           {logo ? (
             <Image
@@ -44,34 +44,44 @@ export function ExperienceCard({ experience, open, onToggle }: ExperienceCardPro
               alt=""
               width={44}
               height={44}
-              className="border-line size-11 shrink-0 rounded-[10px] border bg-white object-contain"
+              className="border-line size-10 shrink-0 rounded-[10px] border bg-white object-contain sm:size-11"
             />
           ) : (
             <span
               aria-hidden
-              className="border-line text-muted-ink flex size-11 shrink-0 items-center justify-center rounded-[10px] border bg-white text-[13px] font-semibold"
+              className="border-line text-muted-ink flex size-10 shrink-0 items-center justify-center rounded-[10px] border bg-white text-[13px] font-semibold sm:size-11"
             >
               {company.charAt(0)}
             </span>
           )}
 
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="text-ink text-[16px] leading-[19px] font-semibold">{company}</span>
-            <span className="text-muted-ink text-[14px] leading-[17px]">{role}</span>
+            <span className="text-ink text-[15px] leading-[19px] font-semibold sm:text-[16px]">
+              {company}
+            </span>
+            <span className="text-muted-ink text-[13px] leading-[17px] sm:text-[14px]">{role}</span>
+            <span className="text-muted-ink mt-0.5 flex flex-wrap items-center gap-1.5 text-[12px] leading-4 sm:hidden">
+              <span>{location}</span>
+              <span aria-hidden className="bg-line h-2.5 w-px" />
+              <span>
+                {start} – {end}
+              </span>
+            </span>
           </span>
 
-          <span className="text-muted-ink flex shrink-0 items-center gap-3 text-[13px] leading-4">
+          <span className="text-muted-ink hidden shrink-0 items-center gap-3 text-[13px] leading-4 sm:flex">
             {location}
             <span aria-hidden className="bg-line h-3 w-px" />
             {start} – {end}
-            <ChevronDown
-              aria-hidden
-              className={cn(
-                'text-muted-ink size-[18px] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none',
-                open && 'rotate-180',
-              )}
-            />
           </span>
+
+          <ChevronDown
+            aria-hidden
+            className={cn(
+              'text-muted-ink size-[18px] shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none',
+              open && 'rotate-180',
+            )}
+          />
         </button>
       </h3>
 
