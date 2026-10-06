@@ -25,6 +25,7 @@
     "@forgeui": "https://forgeui.in/r/{name}.json",
     "@magicui": "https://magicui.design/r/{name}",
     "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json",
-    "@react-bits": "https://reactbits.dev/r/{name}.json"
+    "@react-bits": "https://reactbits.dev/r/{name}.json",
+    "@soundcn": "https://soundcn.xyz/r/{name}.json"
   }
 }

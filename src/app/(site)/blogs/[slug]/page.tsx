@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
+
+import { SoundLink } from '@/components/sound-link';
 
 import { getPublishedArticleBySlug } from '@/lib/articles';
 import { formatArticleDate, formatReadTime } from '@/lib/format';
@@ -11,6 +12,8 @@ import { HandNote } from '@/components/layout/hand-note';
 import { ShareButton } from '@/components/share-button';
 import { TiptapBody } from '@/components/tiptap-body';
 import { ImageZoom } from '@/components/kibo-ui/image-zoom';
+import { GooeyText } from '@/components/ui/gooey-text';
+import { TextReveal } from '@/components/forgeui/text-reveal';
 
 export async function generateMetadata(props: PageProps<'/blogs/[slug]'>): Promise<Metadata> {
   const { slug } = await props.params;
@@ -45,17 +48,17 @@ export default async function BlogDetailsPage(props: PageProps<'/blogs/[slug]'>)
           <nav aria-label="Breadcrumb">
             <ol className="text-body flex items-center gap-2 text-[14px] leading-5">
               <li>
-                <Link href="/" className="hover:text-ink font-medium transition-colors">
+                <SoundLink href="/" className="hover:text-ink font-medium transition-colors">
                   Home
-                </Link>
+                </SoundLink>
               </li>
               <li aria-hidden className="text-faint">
                 /
               </li>
               <li>
-                <Link href="/blogs" className="hover:text-ink font-medium transition-colors">
+                <SoundLink href="/blogs" className="hover:text-ink font-medium transition-colors">
                   Blogs
-                </Link>
+                </SoundLink>
               </li>
               <li aria-hidden className="text-faint">
                 /
@@ -73,9 +76,28 @@ export default async function BlogDetailsPage(props: PageProps<'/blogs/[slug]'>)
         </div>
 
         <header className="mt-6">
-          <p className="font-mono text-[12px] leading-4 text-[#9ca3af]">{meta}</p>
-          <h1 className="text-ink mt-2 text-[32px] leading-[38px] font-bold">{article.title}</h1>
-          <p className="text-muted-ink mt-3 text-[16px] leading-[26px]">{article.excerpt}</p>
+          {meta && (
+            <p className="font-mono text-[12px] leading-4 text-[#9ca3af]">
+              <TextReveal text={meta} duration={0.4} staggerDelay={0.03} />
+            </p>
+          )}
+          <h1 className="text-ink mt-2 text-[32px] leading-[38px] font-bold">
+            <GooeyText
+              text={article.title}
+              className="text-ink text-[32px] leading-[38px] font-bold"
+            />
+          </h1>
+          {article.excerpt && (
+            <p className="text-muted-ink mt-3 text-[16px] leading-[26px]">
+              <TextReveal
+                key={article.excerpt}
+                text={article.excerpt}
+                duration={0.45}
+                staggerDelay={0.03}
+                delay={0.2}
+              />
+            </p>
+          )}
         </header>
 
         {/* Same glass ring as the project details cover. */}

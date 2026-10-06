@@ -1,5 +1,6 @@
-import Link from 'next/link';
 import { AlertCircle } from 'lucide-react';
+
+import { SoundLink } from '@/components/sound-link';
 
 /**
  * Fallback displayed when the database or query fails to load featured posts.
@@ -17,12 +18,12 @@ export function BlogsError() {
         <p className="text-muted-ink max-w-sm font-mono text-[12px]">
           Could not load featured articles. You can still check out the rest of the archive.
         </p>
-        <Link
+        <SoundLink
           href="/blogs"
           className="border-line-soft text-ink hover:bg-tile-start mt-1 rounded-full border bg-white px-3.5 py-1 font-mono text-[12px] transition-colors"
         >
           Browse archive
-        </Link>
+        </SoundLink>
       </div>
       <div aria-hidden className="h-px w-full bg-[#ececf0]" />
     </div>

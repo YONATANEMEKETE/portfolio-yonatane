@@ -1,5 +1,6 @@
-import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
+
+import { SoundLink } from '@/components/sound-link';
 
 /**
  * Rendered when there are no featured articles on the home page.
@@ -20,7 +21,7 @@ export function EmptyBlogs() {
             take a detour through the archive in the meantime.
           </p>
         </div>
-        <Link
+        <SoundLink
           href="/blogs"
           className="group border-line-soft text-ink hover:bg-tile-start mt-2 inline-flex items-center gap-1.5 rounded-full border bg-white px-4 py-1.5 font-mono text-[12px] font-medium transition-colors"
         >
@@ -29,7 +30,7 @@ export function EmptyBlogs() {
             aria-hidden
             className="size-3.5 transition-transform duration-200 ease-out group-hover:translate-x-1"
           />
-        </Link>
+        </SoundLink>
       </div>
       <div aria-hidden className="h-px w-full bg-[#ececf0]" />
     </div>

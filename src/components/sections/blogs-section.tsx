@@ -1,6 +1,7 @@
-import Link from 'next/link';
 import { Suspense } from 'react';
 import { ArrowRight } from 'lucide-react';
+
+import { SoundLink } from '@/components/sound-link';
 
 import { getFeaturedPosts } from '@/lib/featured-posts';
 
@@ -63,7 +64,7 @@ export function BlogsSection() {
           <p className="text-[15px] leading-[18px] text-[#9ca3af]">Writing</p>
           <h2 className="text-ink text-[28px] leading-[34px] font-bold">Featured Blogs</h2>
         </div>
-        <Link
+        <SoundLink
           href="/blogs"
           className="text-ink group flex shrink-0 items-center gap-1 text-[14px] leading-5 font-semibold"
         >
@@ -72,7 +73,7 @@ export function BlogsSection() {
             aria-hidden
             className="size-[14px] transition-transform duration-200 ease-out group-hover:translate-x-1"
           />
-        </Link>
+        </SoundLink>
       </div>
 
       <Suspense fallback={<BlogsSkeleton />}>

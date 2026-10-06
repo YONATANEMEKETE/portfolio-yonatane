@@ -7,6 +7,9 @@ import { motion } from 'motion/react';
 
 import { pillSpring, usePills } from '@/lib/use-pills';
 import { cn } from '@/lib/utils';
+import { maximize007Sound } from '@/lib/maximize-007';
+import { playSound } from '@/lib/sound-engine';
+import { useLenis } from 'lenis/react';
 
 // The glass shape + edge highlight live in the .nav-tab-mask utility (globals.css).
 // 307px is the plate width from the design, kept as a minimum so the shape and its
@@ -47,6 +50,7 @@ function isActivePath(
 
 export function NavWrap() {
   const pathname = usePathname();
+  const lenis = useLenis();
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [projectsInView, setProjectsInView] = useState(false);
   const [blogsInView, setBlogsInView] = useState(false);
@@ -101,6 +105,8 @@ export function NavWrap() {
   // would do nothing. Scrolling here means the click always lands on the
   // section; the CSS `scroll-behavior` decides whether it animates.
   function handleNavClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
+    void playSound(maximize007Sound.dataUri).catch(() => {});
+
     if (pathname !== '/' || !href.startsWith('/#')) {
       return;
     }
@@ -111,7 +117,11 @@ export function NavWrap() {
     }
 
     event.preventDefault();
-    section.scrollIntoView({ block: 'start' });
+    if (lenis) {
+      lenis.scrollTo(section);
+    } else {
+      section.scrollIntoView({ block: 'start' });
+    }
     window.history.replaceState(null, '', href);
   }
 

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Caveat, Inter, JetBrains_Mono } from 'next/font/google';
+import ClickSpark from '@/components/ClickSpark';
 import Noise from '@/components/Noise';
+import { SmoothScroll } from '@/components/smooth-scroll';
 import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -26,8 +28,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       className={cn('font-sans', inter.variable, jetbrainsMono.variable, caveat.variable)}
     >
       <body>
-        <Noise />
-        {children}
+        <SmoothScroll>
+          <Noise patternAlpha={8} />
+          <ClickSpark sparkColor="#3b82f6">{children}</ClickSpark>
+        </SmoothScroll>
       </body>
     </html>
   );

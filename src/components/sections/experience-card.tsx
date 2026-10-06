@@ -9,6 +9,8 @@ import { cn } from '@/lib/utils';
 
 import { ToolCard } from '@/components/sections/tool-card';
 import { Emphasise } from '@/components/emphasise';
+import { maximize007Sound } from '@/lib/maximize-007';
+import { playSound } from '@/lib/sound-engine';
 
 type ExperienceCardProps = {
   experience: Experience;
@@ -21,6 +23,11 @@ export function ExperienceCard({ experience, open, onToggle }: ExperienceCardPro
   const { id, company, role, logo, location, start, end, tools, done } = experience;
   const bodyId = `${id}-body`;
 
+  function handleToggle() {
+    void playSound(maximize007Sound.dataUri).catch(() => {});
+    onToggle();
+  }
+
   return (
     <article className="border-line-soft overflow-hidden rounded-[16px] border bg-white">
       <h3>
@@ -28,7 +35,7 @@ export function ExperienceCard({ experience, open, onToggle }: ExperienceCardPro
           type="button"
           aria-expanded={open}
           aria-controls={bodyId}
-          onClick={onToggle}
+          onClick={handleToggle}
           className="focus-visible:ring-ink/30 flex w-full items-center gap-3 px-5 py-5 text-left transition-colors hover:bg-[#fcfcfe] focus-visible:ring-2 focus-visible:outline-none"
         >
           {logo ? (

@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, Link2 } from 'lucide-react';
 
+import { maximize007Sound } from '@/lib/maximize-007';
+import { playSound } from '@/lib/sound-engine';
+
 /**
  * Copies the current page URL. The icon acknowledges with a check for two
  * seconds, and an aria-live region announces the copy for screen readers.
@@ -25,6 +28,7 @@ export function ShareButton() {
         type="button"
         aria-label="Copy link to this page"
         onClick={() => {
+          void playSound(maximize007Sound.dataUri).catch(() => {});
           void navigator.clipboard
             .writeText(window.location.href)
             .then(() => {

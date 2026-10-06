@@ -1,9 +1,13 @@
+'use client';
+
 import Image from 'next/image';
-import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 
 import type { Project } from '@/content/projects';
 import { cn } from '@/lib/utils';
+import { SoundLink } from '@/components/sound-link';
+import { maximize007Sound } from '@/lib/maximize-007';
+import { playSound } from '@/lib/sound-engine';
 
 import { ToolCard } from '@/components/sections/tool-card';
 import { Emphasise } from '@/components/emphasise';
@@ -92,6 +96,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
                     href={links.live}
                     target="_blank"
                     rel="noreferrer"
+                    onClick={() => {
+                      void playSound(maximize007Sound.dataUri).catch(() => {});
+                    }}
                     className="text-body hover:text-ink focus-visible:ring-ink/30 group relative z-10 flex items-center gap-1 text-[14px] leading-4 font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
                   >
                     Live link
@@ -109,6 +116,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
                     href={links.repo}
                     target="_blank"
                     rel="noreferrer"
+                    onClick={() => {
+                      void playSound(maximize007Sound.dataUri).catch(() => {});
+                    }}
                     className="text-body hover:text-ink focus-visible:ring-ink/30 group relative z-10 flex items-center gap-1.5 text-[14px] leading-4 font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
                   >
                     GitHub
@@ -120,7 +130,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               {/* A plain anchor here would reload the document, restarting the
                   header and stopping the music; Link keeps the navigation
                   client-side like every other internal link. */}
-              <Link
+              <SoundLink
                 href={`/projects/${slug}`}
                 aria-label={`${name} details`}
                 className="text-ink focus-visible:ring-ink/30 group flex shrink-0 items-center gap-1 text-[14px] leading-4 font-medium after:absolute after:inset-0 after:content-[''] focus-visible:ring-2 focus-visible:outline-none"
@@ -130,7 +140,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                   aria-hidden
                   className="size-[14px] transition-transform duration-200 ease-out group-hover:translate-x-1"
                 />
-              </Link>
+              </SoundLink>
             </div>
           </div>
         </div>

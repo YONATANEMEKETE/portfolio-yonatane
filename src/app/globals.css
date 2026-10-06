@@ -4,6 +4,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
+@import 'lenis/dist/lenis.css';
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:is(.dark *));
@@ -622,5 +623,8 @@
     /* The nav's section links scroll within a page; animate that, but let the
        reduced-motion media query above turn it back into a jump. */
     scroll-behavior: smooth;
+  }
+  html.lenis {
+    scroll-behavior: auto !important;
   }
 }

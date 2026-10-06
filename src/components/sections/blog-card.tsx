@@ -1,6 +1,8 @@
-import Link from 'next/link';
+'use client';
+
 import { ArrowUpRight } from 'lucide-react';
 
+import { SoundLink } from '@/components/sound-link';
 import { formatArticleDate, formatReadTime } from '@/lib/format';
 
 export type BlogCardPost = {
@@ -54,7 +56,7 @@ export function BlogCard({ post, index }: BlogCardProps) {
         <ArrowUpRight className="text-ink size-[18px] transform-gpu transition-all duration-300 ease-in-out group-hover:translate-x-1 group-hover:-translate-y-1" />
       </span>
 
-      <Link
+      <SoundLink
         href={`/blogs/${post.slug}`}
         aria-label={`Read ${post.title}`}
         className="focus-visible:ring-ink/30 absolute inset-0 rounded-[8px] focus-visible:ring-2 focus-visible:outline-none"

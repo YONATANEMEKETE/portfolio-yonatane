@@ -1,4 +1,9 @@
-import { forwardRef, type ReactNode } from 'react';
+'use client';
+
+import { forwardRef, type MouseEvent, type ReactNode } from 'react';
+
+import { maximize007Sound } from '@/lib/maximize-007';
+import { playSound } from '@/lib/sound-engine';
 
 /** Lets callers attach data attributes (e.g. the cal.com embed's) to the tile. */
 type DataAttributes = Record<`data-${string}`, string | undefined>;
@@ -9,13 +14,18 @@ export type SocialCardProps = {
   /** Omit (or leave empty) until the real link is known. */
   href?: string;
   /** For actions instead of navigation, e.g. opening the cal.com dialog. */
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
 } & DataAttributes;
 
 export const SocialCard = forwardRef<HTMLAnchorElement | HTMLButtonElement, SocialCardProps>(
   function SocialCard({ icon, label, href, onClick, ...rest }, ref) {
     const className =
       'border-line text-ink-soft from-tile-start to-tile-end hover:from-[#fcfcfe] hover:to-[#e7e7ed] flex shrink-0 items-center gap-2 rounded-[10px] border bg-linear-to-b px-3 py-[7px] text-[13px] leading-4 font-medium transition-colors hover:border-ghost focus-visible:ring-ink/30 focus-visible:ring-2 focus-visible:outline-none';
+
+    function handleClick(event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) {
+      void playSound(maximize007Sound.dataUri).catch(() => {});
+      onClick?.(event);
+    }
 
     // No destination yet: render the same tile as a plain button so the row keeps
     // its shape and nothing navigates to an empty href.
@@ -24,7 +34,7 @@ export const SocialCard = forwardRef<HTMLAnchorElement | HTMLButtonElement, Soci
         <button
           ref={ref as React.Ref<HTMLButtonElement>}
           type="button"
-          onClick={onClick}
+          onClick={handleClick}
           className={className}
           {...rest}
         >
@@ -42,6 +52,7 @@ export const SocialCard = forwardRef<HTMLAnchorElement | HTMLButtonElement, Soci
       <a
         ref={ref as React.Ref<HTMLAnchorElement>}
         href={href}
+        onClick={handleClick}
         {...linkProps}
         className={className}
         {...rest}

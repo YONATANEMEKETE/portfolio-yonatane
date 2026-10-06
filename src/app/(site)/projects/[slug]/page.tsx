@@ -1,17 +1,19 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
+
+import { SoundLink } from '@/components/sound-link';
 
 import { projects } from '@/content/projects';
 import { cn } from '@/lib/utils';
 
-import { Emphasise } from '@/components/emphasise';
 import { Container } from '@/components/layout/container';
 import { HandNote } from '@/components/layout/hand-note';
 import { Markdown } from '@/components/markdown';
 import { ShareButton } from '@/components/share-button';
 import { ImageZoom } from '@/components/kibo-ui/image-zoom';
+import { GooeyText } from '@/components/ui/gooey-text';
+import { TextReveal } from '@/components/forgeui/text-reveal';
 
 const statusLabel = { building: 'Building', live: 'Live' } as const;
 
@@ -55,17 +57,20 @@ export default async function ProjectDetailsPage(props: PageProps<'/projects/[sl
           <nav aria-label="Breadcrumb">
             <ol className="text-body flex items-center gap-2 text-[14px] leading-5">
               <li>
-                <Link href="/" className="hover:text-ink font-medium transition-colors">
+                <SoundLink href="/" className="hover:text-ink font-medium transition-colors">
                   Home
-                </Link>
+                </SoundLink>
               </li>
               <li aria-hidden className="text-faint">
                 /
               </li>
               <li>
-                <Link href="/#projects" className="hover:text-ink font-medium transition-colors">
+                <SoundLink
+                  href="/#projects"
+                  className="hover:text-ink font-medium transition-colors"
+                >
                   Projects
-                </Link>
+                </SoundLink>
               </li>
               <li aria-hidden className="text-faint">
                 /
@@ -86,7 +91,9 @@ export default async function ProjectDetailsPage(props: PageProps<'/projects/[sl
 
         <header className="mt-6">
           <div className="flex items-center justify-between gap-4">
-            <h1 className="text-ink text-[36px] leading-[44px] font-bold">{name}</h1>
+            <h1 className="text-ink text-[36px] leading-[44px] font-bold">
+              <GooeyText text={name} className="text-ink text-[36px] leading-[44px] font-bold" />
+            </h1>
 
             <p className="text-body flex shrink-0 items-center gap-1.5 text-[13px] leading-4 font-medium">
               <span
@@ -101,11 +108,22 @@ export default async function ProjectDetailsPage(props: PageProps<'/projects/[sl
           </div>
 
           <p className="text-muted-ink mt-2 text-[18px] leading-[26px]">
-            <Emphasise text={tagline} />
+            <TextReveal
+              key={tagline}
+              text={tagline.replace(/\*\*/g, '')}
+              duration={0.45}
+              staggerDelay={0.06}
+            />
           </p>
 
           <p className="text-body-soft mt-3 text-[16px] leading-[26px]">
-            <Emphasise text={description} />
+            <TextReveal
+              key={description}
+              text={description.replace(/\*\*/g, '')}
+              duration={0.4}
+              staggerDelay={0.03}
+              delay={0.25}
+            />
           </p>
         </header>
 

@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from 'react';
 
-import { formatViewCount } from '@/lib/format';
+import { NumberTicker } from '@/components/ui/number-ticker';
 import { getViewCountSnapshot, subscribeToViewCount } from '@/lib/view-count-store';
 
 /**
@@ -14,7 +14,7 @@ export function ViewCounter() {
 
   return (
     <span className="inline-block min-w-[3.5rem] tabular-nums">
-      {count === null ? '—' : formatViewCount(count)}
+      {count === null ? '—' : <NumberTicker value={count} />}
     </span>
   );
 }

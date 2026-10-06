@@ -1,13 +1,16 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { Suspense } from 'react';
 import { AlertCircle, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+
+import { SoundLink } from '@/components/sound-link';
 
 import { Container } from '@/components/layout/container';
 import { BlogCard } from '@/components/sections/blog-card';
 import { BlogsSkeleton } from '@/components/sections/blogs-skeleton';
 import { getPublishedArticles } from '@/lib/articles';
 import { cn } from '@/lib/utils';
+import { GooeyText } from '@/components/ui/gooey-text';
+import { TextReveal } from '@/components/forgeui/text-reveal';
 
 export const metadata: Metadata = {
   title: 'Blogs',
@@ -70,7 +73,7 @@ function BlogsArchiveEmpty({ category }: { category: CategoryFilter }) {
           </p>
         </div>
         {isFiltered ? (
-          <Link
+          <SoundLink
             href="/blogs"
             className="group border-line-soft text-ink hover:bg-tile-start mt-2 inline-flex items-center gap-1.5 rounded-full border bg-white px-4 py-1.5 font-mono text-[12px] font-medium transition-colors"
           >
@@ -79,9 +82,9 @@ function BlogsArchiveEmpty({ category }: { category: CategoryFilter }) {
               aria-hidden
               className="size-3.5 transition-transform duration-200 ease-out group-hover:translate-x-1"
             />
-          </Link>
+          </SoundLink>
         ) : (
-          <Link
+          <SoundLink
             href="/"
             className="group border-line-soft text-ink hover:bg-tile-start mt-2 inline-flex items-center gap-1.5 rounded-full border bg-white px-4 py-1.5 font-mono text-[12px] font-medium transition-colors"
           >
@@ -90,7 +93,7 @@ function BlogsArchiveEmpty({ category }: { category: CategoryFilter }) {
               className="size-3.5 transition-transform duration-200 ease-out group-hover:-translate-x-1"
             />
             <span>Back to home</span>
-          </Link>
+          </SoundLink>
         )}
       </div>
       <div aria-hidden className="h-px w-full bg-[#ececf0]" />
@@ -148,9 +151,9 @@ export default async function BlogsPage({
         <nav aria-label="Breadcrumb">
           <ol className="text-body flex items-center gap-2 text-[14px] leading-5">
             <li>
-              <Link href="/" className="hover:text-ink font-medium transition-colors">
+              <SoundLink href="/" className="hover:text-ink font-medium transition-colors">
                 Home
-              </Link>
+              </SoundLink>
             </li>
             <li aria-hidden className="text-[#d1d1d6]">
               /
@@ -163,25 +166,33 @@ export default async function BlogsPage({
 
         {/* Header */}
         <header className="flex flex-col gap-2 pt-6 pb-6">
-          <p className="text-[15px] leading-[18px] text-[#9ca3af]">Writing</p>
-          <h1 className="text-ink text-[32px] leading-[38px] font-bold">All Blogs</h1>
+          <p className="text-[15px] leading-[18px] text-[#9ca3af]">
+            <TextReveal text="Writing" duration={0.4} />
+          </p>
+          <h1 className="text-ink text-[32px] leading-[38px] font-bold">
+            <GooeyText text="All Blogs" className="text-ink text-[32px] leading-[38px] font-bold" />
+          </h1>
           <p className="text-muted-ink max-w-xl text-[15px] leading-[22px]">
-            A little tech, a little heart, and things I probably shouldn&apos;t say out loud. Stay a
-            while, I don&apos;t bite.
+            <TextReveal
+              text="A little tech, a little heart, and things I probably shouldn't say out loud. Stay a while, I don't bite."
+              duration={0.45}
+              staggerDelay={0.03}
+              delay={0.15}
+            />
           </p>
         </header>
 
         {/* Category Filter Tabs */}
         <div role="group" aria-label="Filter by category" className="flex items-center gap-2 pb-6">
           {CATEGORY_TABS.map((tab) => (
-            <Link
+            <SoundLink
               key={tab.value}
               href={tab.href}
               className={chipClass(category === tab.value)}
               aria-current={category === tab.value ? 'page' : undefined}
             >
               {tab.label}
-            </Link>
+            </SoundLink>
           ))}
         </div>
 
