@@ -6,12 +6,13 @@ import { BlogsSkeleton } from './blogs-skeleton';
 import { EmptyBlogs } from './empty-blogs';
 
 describe('EmptyBlogs', () => {
-  it('renders empty message and link to all blogs', () => {
+  it('renders friendly empty message and animated link to all blogs', () => {
     const html = renderToStaticMarkup(<EmptyBlogs />);
 
-    expect(html).toContain('No featured blogs yet');
+    expect(html).toContain('Cooking up something fresh');
     expect(html).toContain('href="/blogs"');
     expect(html).toContain('View all blogs');
+    expect(html).toContain('group-hover:-translate-x-1');
   });
 });
 
