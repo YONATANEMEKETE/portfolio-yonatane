@@ -3,6 +3,14 @@ import { cn } from '@/lib/utils';
 import { HandNote } from '@/components/layout/hand-note';
 import { BookCall } from '@/components/sections/book-call';
 import { SocialCard } from '@/components/sections/social-card';
+import {
+  Glimpse,
+  GlimpseContent,
+  GlimpseDescription,
+  GlimpseImage,
+  GlimpseTitle,
+  GlimpseTrigger,
+} from '@/components/kibo-ui/glimpse';
 
 type Glyph = {
   /** Icon path copied from the design, not a substitute icon set. */
@@ -30,6 +38,37 @@ function SocialIcon({ d, viewBox = '0 0 24 24', stroked }: Glyph) {
     </svg>
   );
 }
+
+type GlimpsePreview = {
+  title: string;
+  description: string;
+  image: string;
+  imageAlt?: string;
+  imageClassName?: string;
+};
+
+const glimpsePreviews: Record<string, GlimpsePreview> = {
+  X: {
+    title: 'Yonatan Mekete (@Yonatanem2) / X',
+    description: 'Shipping | Fullstack Typescript Dev',
+    image: 'https://pbs.twimg.com/profile_banners/1889269372285509632/1783256956/600x200',
+    imageAlt: 'Yonatan Mekete profile banner on X',
+  },
+  GitHub: {
+    title: 'YONATANEMEKETE (Yonatane Mekete)',
+    description:
+      'Full-Stack TypeScript Engineer building production-grade software. 55 repositories on GitHub.',
+    image: 'https://opengraph.githubassets.com/1/YONATANEMEKETE',
+    imageAlt: 'Yonatane Mekete GitHub preview',
+  },
+  LinkedIn: {
+    title: 'Yonatan Mekete | LinkedIn',
+    description: 'Full Stack Software Engineer • TypeScript, Next.js, Node.js, Cloud Architecture.',
+    image: '/profile-image.png',
+    imageAlt: 'Yonatane Mekete on LinkedIn',
+    imageClassName: 'object-[center_25%]',
+  },
+};
 
 // Book a Call renders the cal.com embed instead of a link.
 const socials: { label: string; href: string; icon: Glyph; embed?: 'cal' }[] = [
@@ -86,13 +125,33 @@ export function SocialLinks({ className }: { className?: string }) {
       aria-label="Social links"
       className={cn('relative flex flex-wrap items-center justify-end gap-2', className)}
     >
-      {socials.map(({ label, href, icon, embed }) =>
-        embed === 'cal' ? (
-          <BookCall key={label} icon={<SocialIcon {...icon} />} />
-        ) : (
-          <SocialCard key={label} label={label} href={href} icon={<SocialIcon {...icon} />} />
-        ),
-      )}
+      {socials.map(({ label, href, icon, embed }) => {
+        if (embed === 'cal') {
+          return <BookCall key={label} icon={<SocialIcon {...icon} />} />;
+        }
+
+        const card = <SocialCard label={label} href={href} icon={<SocialIcon {...icon} />} />;
+
+        const preview = glimpsePreviews[label];
+        if (!preview) {
+          return <span key={label}>{card}</span>;
+        }
+
+        return (
+          <Glimpse key={label} closeDelay={0} openDelay={0}>
+            <GlimpseTrigger asChild>{card}</GlimpseTrigger>
+            <GlimpseContent className="w-72" side="bottom" sideOffset={8}>
+              <GlimpseImage
+                src={preview.image}
+                alt={preview.imageAlt ?? preview.title}
+                className={preview.imageClassName}
+              />
+              <GlimpseTitle>{preview.title}</GlimpseTitle>
+              <GlimpseDescription>{preview.description}</GlimpseDescription>
+            </GlimpseContent>
+          </Glimpse>
+        );
+      })}
       <HandNote label="Contact me" className="top-[-89px] left-full ml-[15px]" />
     </section>
   );
