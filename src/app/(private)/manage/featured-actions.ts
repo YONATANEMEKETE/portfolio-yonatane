@@ -2,6 +2,8 @@
 
 import { Prisma } from '@/generated/prisma/client';
 
+import { revalidatePath } from 'next/cache';
+
 import { requireSession } from '@/lib/auth';
 import { getPrisma } from '@/lib/prisma';
 
@@ -39,6 +41,9 @@ export async function toggleFeatured(id: string): Promise<ToggleFeaturedResult> 
       },
       select: { id: true, featured: true },
     });
+
+    revalidatePath('/');
+    revalidatePath('/blogs');
 
     return { ok: true, id: article.id, featured: article.featured };
   } catch (error) {

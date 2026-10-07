@@ -10,6 +10,11 @@ const prismaMock = vi.hoisted(() => ({
   },
 }));
 
+const revalidatePathMock = vi.fn();
+vi.mock('next/cache', () => ({
+  revalidatePath: (path: string) => revalidatePathMock(path),
+}));
+
 vi.mock('@/lib/prisma', () => ({ getPrisma: () => prismaMock }));
 vi.mock('@/lib/auth', () => ({ requireSession: vi.fn() }));
 
@@ -31,6 +36,7 @@ const validInput = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  revalidatePathMock.mockClear();
 });
 
 describe('createArticle', () => {
@@ -65,6 +71,9 @@ describe('createArticle', () => {
       data: { ...validInput, status: 'DRAFT', publishedAt: null },
       select: { slug: true, status: true },
     });
+    expect(revalidatePathMock).toHaveBeenCalledWith('/');
+    expect(revalidatePathMock).toHaveBeenCalledWith('/blogs');
+    expect(revalidatePathMock).toHaveBeenCalledWith('/blogs/hello-world');
   });
 
   it('sets publishedAt when publishing', async () => {

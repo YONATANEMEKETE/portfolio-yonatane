@@ -2,6 +2,8 @@
 
 import { Prisma } from '@/generated/prisma/client';
 
+import { revalidatePath } from 'next/cache';
+
 import { requireSession } from '@/lib/auth';
 import { getPrisma } from '@/lib/prisma';
 
@@ -24,10 +26,15 @@ export async function deleteArticle(id: string): Promise<DeleteArticleResult> {
   try {
     await getPrisma().article.delete({ where: { id }, select: { id: true } });
 
+    revalidatePath('/');
+    revalidatePath('/blogs');
+
     return { ok: true, id };
   } catch (error) {
     // P2025 = already gone — treat as deleted so the list refresh cleans up.
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      revalidatePath('/');
+      revalidatePath('/blogs');
       return { ok: true, id };
     }
     console.error('deleteArticle failed', error);

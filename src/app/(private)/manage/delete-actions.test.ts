@@ -10,6 +10,11 @@ const prismaMock = vi.hoisted(() => ({
   },
 }));
 
+const revalidatePathMock = vi.fn();
+vi.mock('next/cache', () => ({
+  revalidatePath: (path: string) => revalidatePathMock(path),
+}));
+
 vi.mock('@/lib/prisma', () => ({ getPrisma: () => prismaMock }));
 vi.mock('@/lib/auth', () => ({ requireSession: vi.fn() }));
 
@@ -19,6 +24,7 @@ const requireSessionMock = vi.mocked(requireSession);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  revalidatePathMock.mockClear();
 });
 
 describe('deleteArticle', () => {
@@ -51,6 +57,8 @@ describe('deleteArticle', () => {
       where: { id: 'a1' },
       select: { id: true },
     });
+    expect(revalidatePathMock).toHaveBeenCalledWith('/');
+    expect(revalidatePathMock).toHaveBeenCalledWith('/blogs');
   });
 
   it('treats an already-gone row (P2025) as deleted', async () => {

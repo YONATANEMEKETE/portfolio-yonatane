@@ -11,6 +11,11 @@ const prismaMock = vi.hoisted(() => ({
   },
 }));
 
+const revalidatePathMock = vi.fn();
+vi.mock('next/cache', () => ({
+  revalidatePath: (path: string) => revalidatePathMock(path),
+}));
+
 vi.mock('@/lib/prisma', () => ({ getPrisma: () => prismaMock }));
 vi.mock('@/lib/auth', () => ({ requireSession: vi.fn() }));
 
@@ -32,6 +37,7 @@ const validInput = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  revalidatePathMock.mockClear();
 });
 
 describe('updateArticle', () => {
@@ -81,6 +87,9 @@ describe('updateArticle', () => {
     const result = await updateArticle('a1', validInput);
 
     expect(result).toEqual({ ok: true, slug: 'hello-world', status: 'PUBLISHED' });
+    expect(revalidatePathMock).toHaveBeenCalledWith('/');
+    expect(revalidatePathMock).toHaveBeenCalledWith('/blogs');
+    expect(revalidatePathMock).toHaveBeenCalledWith('/blogs/hello-world');
     const data = prismaMock.article.update.mock.calls[0]![0].data;
     expect(data).toMatchObject({
       title: 'Hello World',

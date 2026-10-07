@@ -2,6 +2,8 @@
 
 import { Prisma } from '@/generated/prisma/client';
 
+import { revalidatePath } from 'next/cache';
+
 import { requireSession } from '@/lib/auth';
 import { getPrisma } from '@/lib/prisma';
 
@@ -44,8 +46,14 @@ export async function togglePublish(id: string): Promise<TogglePublishResult> {
         // First publish stamps the birthday; every other transition keeps it.
         publishedAt: toPublished ? (current.publishedAt ?? new Date()) : current.publishedAt,
       },
-      select: { id: true, status: true },
+      select: { id: true, status: true, slug: true },
     });
+
+    revalidatePath('/');
+    revalidatePath('/blogs');
+    if (article.slug) {
+      revalidatePath(`/blogs/${article.slug}`);
+    }
 
     return { ok: true, id: article.id, status: article.status };
   } catch (error) {

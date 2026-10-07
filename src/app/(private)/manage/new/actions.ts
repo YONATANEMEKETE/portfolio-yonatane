@@ -2,6 +2,8 @@
 
 import { Prisma } from '@/generated/prisma/client';
 
+import { revalidatePath } from 'next/cache';
+
 import { requireSession } from '@/lib/auth';
 import { getPrisma } from '@/lib/prisma';
 import { articleSchema } from '@/lib/validation';
@@ -59,6 +61,12 @@ export async function createArticle(input: unknown): Promise<CreateArticleResult
       },
       select: { slug: true, status: true },
     });
+
+    revalidatePath('/');
+    revalidatePath('/blogs');
+    if (article.slug) {
+      revalidatePath(`/blogs/${article.slug}`);
+    }
 
     return { ok: true, slug: article.slug, status: article.status };
   } catch (error) {

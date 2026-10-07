@@ -11,6 +11,9 @@ import { QuoteSection } from '@/components/sections/quote-section';
 import { FooterSection } from '@/components/sections/footer-section';
 import { HomeSectionIndex } from '@/components/sections/home-section-index';
 
+// Revalidate home page every 60 seconds (ISR fallback alongside on-demand revalidation).
+export const revalidate = 60;
+
 export default function Home() {
   return (
     <main className="relative">

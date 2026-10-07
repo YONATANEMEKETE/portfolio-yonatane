@@ -11,6 +11,11 @@ const prismaMock = vi.hoisted(() => ({
   },
 }));
 
+const revalidatePathMock = vi.fn();
+vi.mock('next/cache', () => ({
+  revalidatePath: (path: string) => revalidatePathMock(path),
+}));
+
 vi.mock('@/lib/prisma', () => ({ getPrisma: () => prismaMock }));
 vi.mock('@/lib/auth', () => ({ requireSession: vi.fn() }));
 
@@ -20,6 +25,7 @@ const requireSessionMock = vi.mocked(requireSession);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  revalidatePathMock.mockClear();
 });
 
 describe('togglePublish', () => {
@@ -54,11 +60,14 @@ describe('togglePublish', () => {
   it('publishes a draft and stamps publishedAt on first publish', async () => {
     requireSessionMock.mockResolvedValue({ id: 's1' } as never);
     prismaMock.article.findUnique.mockResolvedValue({ status: 'DRAFT', publishedAt: null });
-    prismaMock.article.update.mockResolvedValue({ id: 'a1', status: 'PUBLISHED' });
+    prismaMock.article.update.mockResolvedValue({ id: 'a1', status: 'PUBLISHED', slug: 'a1-slug' });
 
     const result = await togglePublish('a1');
 
     expect(result).toEqual({ ok: true, id: 'a1', status: 'PUBLISHED' });
+    expect(revalidatePathMock).toHaveBeenCalledWith('/');
+    expect(revalidatePathMock).toHaveBeenCalledWith('/blogs');
+    expect(revalidatePathMock).toHaveBeenCalledWith('/blogs/a1-slug');
     const data = prismaMock.article.update.mock.calls[0]![0].data;
     expect(data.status).toBe('PUBLISHED');
     expect(data.publishedAt).toBeInstanceOf(Date);

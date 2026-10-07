@@ -11,6 +11,11 @@ const prismaMock = vi.hoisted(() => ({
   },
 }));
 
+const revalidatePathMock = vi.fn();
+vi.mock('next/cache', () => ({
+  revalidatePath: (path: string) => revalidatePathMock(path),
+}));
+
 vi.mock('@/lib/prisma', () => ({ getPrisma: () => prismaMock }));
 vi.mock('@/lib/auth', () => ({ requireSession: vi.fn() }));
 
@@ -20,6 +25,7 @@ const requireSessionMock = vi.mocked(requireSession);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  revalidatePathMock.mockClear();
 });
 
 describe('toggleFeatured', () => {
@@ -64,6 +70,8 @@ describe('toggleFeatured', () => {
       data: { featured: true },
       select: { id: true, featured: true },
     });
+    expect(revalidatePathMock).toHaveBeenCalledWith('/');
+    expect(revalidatePathMock).toHaveBeenCalledWith('/blogs');
   });
 
   it('toggles featured from true to false', async () => {
